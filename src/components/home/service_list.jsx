@@ -1,23 +1,34 @@
+'use client';
+import { useRouter } from 'next/navigation';
 import ServiceCard from '@/components/home/service_card';
 import { Inter } from 'next/font/google';
 
 const inter = Inter({ subsets: ['latin'], weight: ['100','200','300','400','500','700','900'] });
 
 const ServiceList = () => {
+  const router = useRouter(); 
+  const usaHandleClick = () => {
+    router.push('/usa');
+  };
+  const canadaHandleClick = () => {
+    router.push('/canada');
+  };
     const services = [
     {
       title: "Visa EEUU",
       subtitle: "Conseguí tu visa de turismo B1/B2",
       description: "Gestión completa del formulario DS-160, programación de citas y preparación para la entrevista.",
       image: "/images/usa_flag.png", 
-      fallback: "USA"
+      fallback: "USA",
+      handleClick: usaHandleClick
     },
     {
       title: "eTA Canadá",
       subtitle: "Solicitá la autorización para viajar a Canadá",
       description: "Proceso rápido para obtener tu autorización electrónica de viaje a Canadá.",
       image: "/images/canada_flag.png",
-      fallback: "CA"
+      fallback: "CA",
+      handleClick: canadaHandleClick
     }
   ]
     return (
