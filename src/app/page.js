@@ -6,7 +6,7 @@ import Image from 'next/image';
 export default function Home() {
   return (
     <main className="bg-white min-h-screen flex items-center justify-center flex-col">
-      <Image src="/images/banner_pelotas.319Z.png" alt="Banner Visa" width={2816} height={1320} className="w-full h-auto" />
+      <Image src="/images/banner.png" alt="Banner Visa" width={2816} height={1044} className="w-full h-auto" />
       <ServiceList />
       <TestVisa />
       <ContactForm />
