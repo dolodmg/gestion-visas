@@ -2,6 +2,7 @@
 import { Inter, Merriweather } from 'next/font/google';
 import VisaStandard from './visa_standard';
 import VisaPremium from './visa_premium';
+import VisaFamily from './visa_family';
 import { Shield, Zap, Star } from 'lucide-react';
 
 const inter = Inter({ subsets: ['latin'], weight: ['100','200','300','400','500','700','900'] });
@@ -37,12 +38,15 @@ const VisaPricingSection = () => {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-6 max-w-8xl mx-auto">
           <div className="flex justify-center">
             <VisaStandard />
           </div>
           <div className="flex justify-center">
             <VisaPremium />
+          </div>
+          <div className='flex justify-center'>
+            <VisaFamily />
           </div>
         </div>
       </div>
