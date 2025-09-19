@@ -75,12 +75,12 @@ const VisaPremium = () => {
           
           <div className="flex items-start gap-3">
             <Check className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <Video className="w-4 h-4 text-[#D3AF37]" />
-                <span className="font-medium text-[#D3AF37] text-sm">Videollamada personalizada (45 min)</span>
-              </div>
-              <span className="font-light text-sm leading-relaxed text-gray-300">
+            <div className="flex-1 text-sm">
+              <Video className="inline w-4 h-4 text-[#D3AF37] mr-2" />
+              <span className="font-medium text-[#D3AF37]">
+                Videollamada personalizada (45 min)
+              </span>{" "}
+              <span className="font-light text-gray-300">
                 con un gestor especializado donde despejamos todas tus dudas
               </span>
             </div>
