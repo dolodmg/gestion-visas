@@ -4,14 +4,20 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, Users, UserCheck } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 const inter = Inter({ subsets: ['latin'], weight: ['100','200','300','400','500','700','900'] });
 
 const VisaFamily = () => {
-    const title = "Visa EEUU";
-    const price = "Desde $75 USD";
-    const image = "/images/usa_flag.png";
-    const fallback = "USA";
+  const router = useRouter();
+  const title = "Visa EEUU";
+  const price = "Desde $75 USD";
+  const image = "/images/usa_flag.png";
+  const fallback = "USA";
+  const handleClick = () => {
+    router.push('/checkout?plan=3')
+  }
+
   return (
     <div className={`${inter.className} bg-gradient-to-br from-[#212020] to-[#2a2a2a] rounded-2xl p-8 w-full max-w-md text-white relative border-2 border-[#22c55e] hover:shadow-2xl hover:-translate-y-2 transition-all duration-300`}>
       {/* Plan Label */}
@@ -48,6 +54,7 @@ const VisaFamily = () => {
         </div>
 
         <Button 
+          onClick={handleClick}
           className='bg-[#22c55e] hover:bg-green-500 text-black font-semibold text-sm px-6 py-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5'
           size="lg"
         >

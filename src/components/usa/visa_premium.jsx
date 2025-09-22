@@ -3,15 +3,21 @@ import { Inter } from 'next/font/google';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Clock, Info, Video, Star } from 'lucide-react';
+import { Check, Video, Star } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 const inter = Inter({ subsets: ['latin'], weight: ['100','200','300','400','500','700','900'] });
 
 const VisaPremium = () => {
-    const title = "Visa EEUU";
-    const price = "$120 USD";
-    const image = "/images/usa_flag.png";
-    const fallback = "USA";
+  const router = useRouter();
+  const title = "Visa EEUU";
+  const price = "$120 USD";
+  const image = "/images/usa_flag.png";
+  const fallback = "USA";
+  const handleClick = () => {
+    router.push('/checkout?plan=2')
+  }
+
   return (
     <div className={`${inter.className} bg-gradient-to-br from-[#212020] to-[#2a2a2a] rounded-2xl p-8 w-full max-w-md text-white relative border-2 border-[#D3AF37] hover:shadow-2xl hover:-translate-y-2 transition-all duration-300`}>
       {/* Plan Label */}
@@ -42,6 +48,7 @@ const VisaPremium = () => {
         </div>
 
         <Button 
+          onClick={handleClick}
           className='bg-[#D3AF37] hover:bg-yellow-500 text-black font-semibold text-sm px-6 py-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5'
           size="lg"
         >
@@ -78,7 +85,7 @@ const VisaPremium = () => {
             <div className="flex-1 text-sm">
               <Video className="inline w-4 h-4 text-[#D3AF37] mr-2" />
               <span className="font-medium text-[#D3AF37]">
-                Videollamada personalizada (45 min)
+                Videollamada personalizada (30 min)
               </span>{" "}
               <span className="font-light text-gray-300">
                 con un gestor especializado donde despejamos todas tus dudas
