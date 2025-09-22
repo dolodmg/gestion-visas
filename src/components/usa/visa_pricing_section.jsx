@@ -22,10 +22,12 @@ const VisaPricingSection = () => {
           
           {/* Trust Indicators */}
           <div className="flex flex-wrap justify-center gap-8 mb-12">
+            {/*
             <div className="flex items-center gap-3 text-yellow-500">
               <Star className="w-5 h-5" />
               <span className="text-sm font-medium">+50 visas aprobadas</span>
             </div>
+            */}
             <div className="flex items-center gap-3 text-yellow-500">
               <Shield className="w-5 h-5" />
               <span className="text-sm font-medium">Datos 100% seguros</span>

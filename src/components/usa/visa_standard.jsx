@@ -3,15 +3,20 @@ import { Inter } from 'next/font/google';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Clock } from 'lucide-react';
+import { Check } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 const inter = Inter({ subsets: ['latin'], weight: ['100','200','300','400','500','700','900'] });
 
 const VisaStandard = () => {
+  const router = useRouter();
   const title = "Visa EEUU";
   const price = "$100 USD";
   const image = "/images/usa_flag.png";
   const fallback = "🇺🇸";
+  const handleClick = () => {
+    router.push('/checkout?plan=1')
+  }
 
   return (
     <div className={`${inter.className} bg-[#212020] rounded-2xl p-8 w-full max-w-md text-white relative border-2 border-transparent hover:shadow-xl hover:-translate-y-1 transition-all duration-300`}>
@@ -36,6 +41,7 @@ const VisaStandard = () => {
         </div>
 
         <Button 
+          onClick={handleClick}
           className='bg-slate-600 hover:bg-slate-700 font-medium text-sm px-6 py-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5'
           size="lg"
         >

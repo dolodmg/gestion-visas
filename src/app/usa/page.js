@@ -1,11 +1,10 @@
 import Instructions from '@/components/usa/instructions';
 import FAQ from '@/components/common/FAQ';
-import { Inter, Merriweather } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import Image from 'next/image';
 import VisaPricingSection from '@/components/usa/visa_pricing_section';
 
 const inter = Inter({ subsets: ['latin'], weight: ['100','200','300','400','500','700','900'] });
-const merriweather = Merriweather({ subsets: ['latin'], weight: ['300','400','700'] });
 
 const UsaPage = () => {
     const questions = [
