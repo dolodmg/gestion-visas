@@ -1,0 +1,3 @@
+export const MERCADO_PAGO_CONFIG = {
+  MP_PUBLIC_KEY: process.env.NEXT_PUBLIC_MP_PUBLIC_KEY
+};

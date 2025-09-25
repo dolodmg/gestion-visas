@@ -47,16 +47,16 @@ const UsaPage = () => {
 
     return (
         <div>
-            <div className='relative w-full h-[350px] flex items-center'>
+            <div className='relative w-full h-64 sm:h-80 md:h-[350px] flex items-center'>
                 <Image
-                src="/images/us-visa.jpg"
-                alt="Visas a Estados Unidos"
-                fill
-                className="object-cover"
-                priority
+                    src="/images/us-visa.jpg"
+                    alt="Visas a Estados Unidos"
+                    fill
+                    className="object-cover"
+                    priority
                 />
                 <div className="absolute inset-0 bg-white/40"></div>
-                <div className={`${inter.className} relative z-10 text-[#2C3251] font-extralight text-6xl m-10`}>
+                <div className={`${inter.className} relative z-10 text-[#2C3251] font-light md:font-extralight p-4 sm:p-6 md:m-10 text-3xl sm:text-4xl md:text-6xl leading-tight`}>
                     <h1>Visas a</h1>
                     <h1>Estados Unidos</h1>
                 </div>

@@ -18,7 +18,7 @@ const PersonalInfoForm = ({ data, onChange }) => {
         </h2>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <label htmlFor="nombre" className="block text-sm font-medium text-gray-700">
             Nombre *
@@ -29,7 +29,7 @@ const PersonalInfoForm = ({ data, onChange }) => {
             name="nombre"
             value={data.nombre}
             onChange={handleInputChange}
-            className="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            className="text-sm w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
             placeholder="Tu nombre"
             required
           />
@@ -45,14 +45,14 @@ const PersonalInfoForm = ({ data, onChange }) => {
             name="apellido"
             value={data.apellido}
             onChange={handleInputChange}
-            className="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            className="text-sm w-full sm:-w-auto px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
             placeholder="Tu apellido"
             required
           />
         </div>
 
-        <div className="md:col-span-2 space-y-2">
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+        <div className="sm:col-span-2 space-y-2">
+          <label htmlFor="email" className="block w-full text-sm font-medium text-gray-700">
             Email *
           </label>
           <input
@@ -94,7 +94,7 @@ const PersonalInfoForm = ({ data, onChange }) => {
             value={data.documento}
             onChange={handleInputChange}
             className="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-            placeholder="DNI/Pasaporte"
+            placeholder="Pasaporte"
             required
           />
         </div>

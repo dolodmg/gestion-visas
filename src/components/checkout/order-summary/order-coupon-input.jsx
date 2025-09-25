@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin'], weight: ['100','200','300','400','500','700','900'] });
 
 const OrderCouponInput = ({ onValidateCoupon, couponStatus, loading }) => {
   const [coupon, setCoupon] = useState('');
@@ -13,24 +16,32 @@ const OrderCouponInput = ({ onValidateCoupon, couponStatus, loading }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2 mb-4">
-      <Input
-        type="text"
-        placeholder="Ingresá tu cupón"
-        value={coupon}
-        onChange={e => setCoupon(e.target.value)}
-        className="w-32"
-        disabled={loading}
-      />
-      <Button type="submit" size="sm" disabled={loading || !coupon.trim()}>
-        Validar
-      </Button>
-      {couponStatus === 'valid' && (
-        <span className="text-green-600 text-xs ml-2">Cupón aplicado</span>
-      )}
-      {couponStatus === 'invalid' && (
-        <span className="text-red-600 text-xs ml-2">Cupón inválido</span>
-      )}
+    <form onSubmit={handleSubmit} className={`${inter.className} flex mb-4`}>
+      <div className='flex flex-col'>
+        <div className='flex flex-row gap-2'>
+          <Input
+            type="text"
+            placeholder="Ingresá tu cupón"
+            value={coupon}
+            onChange={e => setCoupon(e.target.value)}
+            className="lg:w-3/2"
+            disabled={loading}
+          />
+          <Button 
+          className="bg-slate-700 hover:cursor-pointer hover:bg-slate-800"
+          type="submit" size="sm" disabled={loading || !coupon.trim()}>
+            Validar
+          </Button>
+        </div>
+        <div className='flex flex-row mt-2'>
+          {couponStatus === 'valid' && (
+          <span className="text-green-600 text-xs">¡Cupón aplicado!</span>
+        )}
+        {couponStatus === 'invalid' && (
+          <span className="text-red-600 text-xs">Cupón inválido</span>
+        )}
+        </div>
+      </div>
     </form>
   );
 };

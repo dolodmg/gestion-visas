@@ -13,7 +13,7 @@ const getServiceType = (serviceName) => {
 const OrderSummary = ({ service, quantity, pricing, onQuantityChange, couponStatus, onValidateCoupon, couponLoading }) => {
   if (!service || !pricing) {
     return (
-      <div className="bg-white rounded-xl p-6 shadow-sm sticky top-8 text-center text-gray-400">
+      <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm sticky top-4 lg:top-8 text-center text-gray-400">
         <div className="mb-2 font-semibold">Resumen de orden</div>
         <div className="text-sm">Cargando información del servicio...</div>
       </div>

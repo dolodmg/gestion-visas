@@ -14,36 +14,17 @@ const TestVisa = () => {
   const [showResults, setShowResults] = useState(false);
 
   const questions = [
-    {
-      id: 'passport',
-      text: '¿Tenés pasaporte vigente?',
-      icon: FileText
-    },
-    {
-      id: 'origin',
-      text: '¿Podés demostrar arraigo en tu país de origen?',
-      icon: Globe
-    },
-    {
-      id: 'financial',
-      text: '¿Podés demostrar solvencia económica para costear el viaje?',
-      icon: CreditCard
-    }
+    { id: 'passport', text: '¿Tenés pasaporte vigente?', icon: FileText },
+    { id: 'origin', text: '¿Podés demostrar arraigo en tu país de origen?', icon: Globe },
+    { id: 'financial', text: '¿Podés demostrar solvencia económica para costear el viaje?', icon: CreditCard }
   ];
 
   const handleAnswerChange = (questionId, value) => {
-    setAnswers(prev => ({
-      ...prev,
-      [questionId]: value
-    }));
-    if (showResults) {
-      setShowResults(false);
-    }
+    setAnswers(prev => ({ ...prev, [questionId]: value }));
+    if (showResults) setShowResults(false);
   };
 
-  const handleShowResults = () => {
-    setShowResults(true);
-  };
+  const handleShowResults = () => setShowResults(true);
 
   const allAnswered = Object.values(answers).every(answer => answer !== null);
   const allPositive = Object.values(answers).every(answer => answer === true);
@@ -64,63 +45,62 @@ const TestVisa = () => {
                 <X className="h-4 w-4 text-red-400" />
               </div>
             )}
-            <h3 className="text-md font-medium text-slate-100">
+            <h3 className="text-md md:text-lg font-medium text-slate-100">
               {allPositive ? 'Cumplís los requisitos básicos' : 'Algunos puntos por mejorar'}
             </h3>
           </div>
-          
-          <div className="text-slate-300 space-y-4">
+
+          <div className="text-slate-300 space-y-4 text-sm md:text-base">
             {allPositive ? (
               <>
                 <p>Estás en condiciones de iniciar el proceso. Próximos pasos:</p>
-                <div className="space-y-2 ml-4">
-                  <div className="flex items-center gap-3 text-sm">
+                <ul className="space-y-2 ml-4">
+                  <li className="flex items-center gap-3">
                     <div className="w-1 h-1 bg-slate-400 rounded-full"></div>
                     <span>Reunir documentación completa</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-sm">
+                  </li>
+                  <li className="flex items-center gap-3">
                     <div className="w-1 h-1 bg-slate-400 rounded-full"></div>
                     <span>Agendar cita consular</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-sm">
+                  </li>
+                  <li className="flex items-center gap-3">
                     <div className="w-1 h-1 bg-slate-400 rounded-full"></div>
                     <span>Preparación para entrevista</span>
-                  </div>
-                </div>
+                  </li>
+                </ul>
               </>
             ) : (
               <>
                 <p>Recomendaciones antes de aplicar:</p>
-                <div className="space-y-2 ml-4">
+                <ul className="space-y-2 ml-4">
                   {!answers.passport && (
-                    <div className="flex items-center gap-3 text-sm text-red-300">
+                    <li className="flex items-center gap-3 text-red-300">
                       <div className="w-1 h-1 bg-red-400 rounded-full"></div>
                       <span>Renovar o tramitar pasaporte</span>
-                    </div>
+                    </li>
                   )}
                   {!answers.origin && (
-                    <div className="flex items-center gap-3 text-sm text-red-300">
+                    <li className="flex items-center gap-3 text-red-300">
                       <div className="w-1 h-1 bg-red-400 rounded-full"></div>
                       <span>Obtener documentos de arraigo</span>
-                    </div>
+                    </li>
                   )}
                   {!answers.financial && (
-                    <div className="flex items-center gap-3 text-sm text-red-300">
+                    <li className="flex items-center gap-3 text-red-300">
                       <div className="w-1 h-1 bg-red-400 rounded-full"></div>
                       <span>Preparar respaldo financiero</span>
-                    </div>
+                    </li>
                   )}
-                </div>
+                </ul>
               </>
             )}
           </div>
 
           <div className="mt-6 p-4 bg-slate-700/50 rounded border border-slate-600">
             <p className="text-sm text-slate-300">
-              {allPositive 
+              {allPositive
                 ? 'Contactanos para una evaluación detallada de tu caso.'
-                : 'Te ayudamos a preparar cada requisito paso a paso.'
-              }
+                : 'Te ayudamos a preparar cada requisito paso a paso.'}
             </p>
           </div>
         </div>
@@ -130,17 +110,19 @@ const TestVisa = () => {
 
   return (
     <div className={`${inter.className} min-h-screen w-full bg-[#636A91]`}>
-      <div className="mx-auto px-6 py-16">
-        <div className='flex flex-col w-1/2 mx-auto'>
-          <div className="mb-12">
-            <h1 className="text-3xl font-bold text-slate-100 leading-tight">
+      <div className="mx-auto px-4 sm:px-6 py-12 sm:py-16">
+        <div className="flex flex-col w-full sm:w-4/5 md:w-2/3 lg:w-1/2 mx-auto">
+          {/* Título */}
+          <div className="mb-10 sm:mb-12 text-center">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-100 leading-snug">
               Comprobá si aplicás para la visa en un clic,{' '}
               <span className="text-slate-900">gratis y rápido</span>
             </h1>
           </div>
 
+          {/* Formulario */}
           <div className="bg-[#404459] border border-slate-700 rounded-lg">
-            <div className="p-8">
+            <div className="p-6 sm:p-8">
               <div className="space-y-6">
                 {questions.map((question) => {
                   const Icon = question.icon;
@@ -148,12 +130,12 @@ const TestVisa = () => {
                     <div key={question.id}>
                       <div className="flex items-center gap-3 mb-2">
                         <Icon className="h-5 w-5 text-slate-400" />
-                        <h3 className="text-sm text-slate-100">
+                        <h3 className="text-sm md:text-base text-slate-100">
                           {question.text}
                         </h3>
                       </div>
-                      <div className="ml-8 flex gap-4">
-                        <label className="flex items-center cursor-pointer text-sm">
+                      <div className="ml-8 flex gap-6">
+                        <label className="flex items-center cursor-pointer text-sm md:text-base">
                           <input
                             type="radio"
                             name={question.id}
@@ -162,11 +144,13 @@ const TestVisa = () => {
                             onChange={() => handleAnswerChange(question.id, true)}
                             className="sr-only"
                           />
-                          <div className={`w-4 h-4 rounded-full border-2 mr-2 transition-colors ${
-                            answers[question.id] === true
-                              ? 'border-slate-300 bg-slate-300'
-                              : 'border-slate-500 hover:border-slate-400'
-                          }`}>
+                          <div
+                            className={`w-4 h-4 rounded-full border-2 mr-2 transition-colors ${
+                              answers[question.id] === true
+                                ? 'border-slate-300 bg-slate-300'
+                                : 'border-slate-500 hover:border-slate-400'
+                            }`}
+                          >
                             {answers[question.id] === true && (
                               <div className="w-full h-full bg-slate-800 rounded-full scale-50"></div>
                             )}
@@ -174,7 +158,7 @@ const TestVisa = () => {
                           <span className="text-slate-300">Sí</span>
                         </label>
 
-                        <label className="flex items-center cursor-pointer text-sm">
+                        <label className="flex items-center cursor-pointer text-sm md:text-base">
                           <input
                             type="radio"
                             name={question.id}
@@ -183,11 +167,13 @@ const TestVisa = () => {
                             onChange={() => handleAnswerChange(question.id, false)}
                             className="sr-only"
                           />
-                          <div className={`w-4 h-4 rounded-full border-2 mr-2 transition-colors ${
-                            answers[question.id] === false
-                              ? 'border-slate-300 bg-slate-300'
-                              : 'border-slate-500 hover:border-slate-400'
-                          }`}>
+                          <div
+                            className={`w-4 h-4 rounded-full border-2 mr-2 transition-colors ${
+                              answers[question.id] === false
+                                ? 'border-slate-300 bg-slate-300'
+                                : 'border-slate-500 hover:border-slate-400'
+                            }`}
+                          >
                             {answers[question.id] === false && (
                               <div className="w-full h-full bg-slate-800 rounded-full scale-50"></div>
                             )}
@@ -200,23 +186,25 @@ const TestVisa = () => {
                 })}
               </div>
 
+              {/* Botón */}
               <div className="mt-8">
                 <button
                   onClick={handleShowResults}
                   disabled={!allAnswered}
-                  className={`w-full py-4 px-6 rounded-lg font-medium transition-all ${
+                  className={`w-full py-3 sm:py-4 px-6 rounded-lg font-medium transition-all ${
                     allAnswered
                       ? 'bg-[#2E3141] text-slate-100 hover:bg-[#222531] border border-slate-600'
                       : 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700'
                   }`}
                 >
-                  <span className="flex items-center text-sm justify-center gap-2">
+                  <span className="flex items-center text-sm md:text-base justify-center gap-2">
                     Ver resultados
                     <ChevronDown className="h-4 w-4" />
                   </span>
                 </button>
               </div>
 
+              {/* Resultados */}
               <ResultsSection />
             </div>
           </div>

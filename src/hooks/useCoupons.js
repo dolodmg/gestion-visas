@@ -3,7 +3,7 @@ import { getCouponByCodeAction } from "@/server/coupons";
 
 export const useCoupon = (couponCode) => {
   const [coupon, setCoupon] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
