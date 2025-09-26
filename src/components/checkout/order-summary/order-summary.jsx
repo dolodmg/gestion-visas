@@ -21,11 +21,8 @@ const OrderSummary = ({ service, quantity, pricing, onQuantityChange, couponStat
   }
   const serviceType = getServiceType(service?.serviceName);
   const color = serviceType === 'family' ? 'green' : serviceType === 'premium' ? 'yellow' : 'blue';
-  // Para el pack familiar, hardcodear ahorro
-  const ahorroFamiliar = serviceType === 'family' ? Math.round((1 - (pricing.pricePerPerson * quantity) / pricing.subtotal) * 100) : 0;
-
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm sticky top-8">
+    <div className="bg-white rounded-xl p-6 shadow-sm sticky md:top-8 mb-2">
       {/* Header */}
       <OrderHeader serviceName={service.serviceName} color={color} />
 
@@ -35,7 +32,7 @@ const OrderSummary = ({ service, quantity, pricing, onQuantityChange, couponStat
           quantity={quantity}
           onQuantityChange={onQuantityChange}
           allowsVariableQuantity={service.allowsVariableQuantity}
-          min={service.minQuantity || 1}
+          min={service.minQuantity || 2}
           max={service.maxQuantity || 10}
         />
       )}

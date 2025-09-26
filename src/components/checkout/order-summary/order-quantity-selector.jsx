@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 
 const OrderQuantitySelector = ({ quantity, onQuantityChange, allowsVariableQuantity, min = 1, max = 10 }) => {
@@ -11,7 +10,7 @@ const OrderQuantitySelector = ({ quantity, onQuantityChange, allowsVariableQuant
   }
   return (
     <div className="mb-4">
-      <label className="font-medium mr-2" htmlFor="quantity">Cantidad:</label>
+      <label className="font-medium text-sm mr-2" htmlFor="quantity">Cantidad de personas</label>
       <Input
         id="quantity"
         type="number"
@@ -19,7 +18,7 @@ const OrderQuantitySelector = ({ quantity, onQuantityChange, allowsVariableQuant
         max={max}
         value={quantity}
         onChange={e => onQuantityChange(Number(e.target.value))}
-        className="w-20"
+        className="w-20 mt-1"
       />
     </div>
   );

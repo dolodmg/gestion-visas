@@ -7,19 +7,17 @@ const MercadoPagoPayment = ({
   amount,
   description,
   personalInfo,
-  paymentType = 'brick',
+  onPaymentSubmit, 
   onPaymentSuccess,
   onPaymentError
 }) => {
   const [mp, setMp] = useState(null);
-  const [preferenceId, setPreferenceId] = useState('');
   const [loading, setLoading] = useState(false);
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
   const [brickInitialized, setBrickInitialized] = useState(false);
 
   const brickInstanceRef = useRef(null);
-  const isCreatingPreference = useRef(false);
-
+  
   const memoizedPersonalInfo = useMemo(() => ({
     email: personalInfo?.email,
     name: `${personalInfo?.nombre || ''} ${personalInfo?.apellido || ''}`.trim() || undefined
@@ -43,57 +41,13 @@ const MercadoPagoPayment = ({
     document.head.appendChild(script);
   }, []);
 
-  // Crear preferencia de MercadoPago
-  useEffect(() => {
-    if (mp && isScriptLoaded && !isCreatingPreference.current) {
-      createPreference();
-    }
-  }, [mp, isScriptLoaded]);
-
-  const createPreference = async () => {
-    if (!amount || amount <= 0) {
-      onPaymentError?.({ message: 'Precio no válido' });
-      return;
-    }
-    if (isCreatingPreference.current) return;
-
-    isCreatingPreference.current = true;
-    setLoading(true);
-
-    try {
-      const preferenceData = {
-        totalPrice: amount,
-        description,
-        quantity: 1,
-        customerMail: memoizedPersonalInfo.email,
-        customerName: memoizedPersonalInfo.name
-      };
-
-      const response = await fetch('/api/mercadopago/create-preference', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(preferenceData)
-      });
-
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Error creando preferencia');
-
-      setPreferenceId(data.preferenceId);
-      setBrickInitialized(false);
-
-      if (paymentType === 'brick') {
-        setTimeout(() => initPaymentBrick(data.preferenceId), 100);
+    useEffect(() => {
+      if (mp && isScriptLoaded && !brickInitialized) {
+        initPaymentBrick();
       }
-    } catch (error) {
-      console.error('Error creando preferencia:', error);
-      onPaymentError?.(error);
-    } finally {
-      setLoading(false);
-      isCreatingPreference.current = false;
-    }
-  };
-
-  const initPaymentBrick = (preferenceId) => {
+    }, [mp, isScriptLoaded, brickInitialized]);
+    
+  const initPaymentBrick = () => {
     if (brickInitialized || brickInstanceRef.current) return;
 
     const container = document.getElementById('mp-payment-brick-container');
@@ -106,65 +60,118 @@ const MercadoPagoPayment = ({
     }
 
     mp.bricks().create('payment', 'mp-payment-brick-container', {
-      initialization: { amount, preferenceId },
+      initialization: { 
+        amount: amount
+      },
       customization: {
         paymentMethods: { 
           creditCard: 'all', 
           debitCard: 'all', 
-          mercadoPago: 'all' },
+          mercadoPago: 'all',
+          bankTransfer: 'all',
+          ticket: 'all'
+        },
         visual: { 
           hideFormTitle: true,
+          hideRedirectionPanel: false,
           style: { 
             theme: 'bootstrap', 
             customVariables: { 
               fontSizeMedium: '12px', 
               formPadding: '16px'
-           } } }
+            } 
+          } 
+        }
       },
       locale: 'es-AR',
       callbacks: {
         onReady: () => setBrickInitialized(true),
-        onSubmit: ({ formData }) => {
+        onSubmit: async ({ formData }) => {
           console.log('onSubmit - formData completo:', formData);
-          console.log('payment_method_id:', formData.payment_method_id);
-          console.log('payment_type_id:', formData.payment_type_id);
-          
-          // Para métodos de redirección (Mercado Pago, financiamiento), NO interceptar
-          if (!formData.payment_method_id || 
-              formData.payment_method_id === 'account_money' ||
-              !formData.token) {
-            console.log('Método de redirección - permitiendo flujo normal de MP');
-            // Retornar undefined permite que MP maneje la redirección
-            return;
+          setLoading(true);
+          try {
+            const enrichedFormData = {
+              ...formData,
+              payerEmail: memoizedPersonalInfo.email,
+              payerName: memoizedPersonalInfo.name,
+              transaction_amount: formData.transaction_amount || amount
           }
           
-          // Solo para tarjetas (que tienen token) procesar el pago
-          console.log('Método con token - procesando pago localmente');
-          const enrichedFormData = {
-            ...formData,
-            payerEmail: memoizedPersonalInfo.email,
-            payerName: memoizedPersonalInfo.name
-          };
-          return processPayment(enrichedFormData, preferenceId);
+          if (onPaymentSubmit) {
+              await onPaymentSubmit(enrichedFormData);
+            } else {
+              console.warn('⚠️ onPaymentSubmit no definido - usando flujo por defecto');
+              // Fallback al comportamiento anterior si no se pasa onPaymentSubmit
+              await processPaymentDirect(enrichedFormData);
+            }
+
+          } catch (error) {
+            console.error('❌ Error en onSubmit:', error);
+            onPaymentError?.(error);
+          } finally {
+            setLoading(false);
+          }
         },
-        onError: (error) => onPaymentError?.(error)
+        onError: (error) => {
+          console.error('❌ Error del Payment Brick:', error);
+          onPaymentError?.(error);
+        }
       }
-    }).then(instance => brickInstanceRef.current = instance)
-      .catch(error => onPaymentError?.(error));
+    }).then(instance => {
+      brickInstanceRef.current = instance;
+      console.log('✅ Payment Brick creado exitosamente');
+    })
+    .catch(error => {
+      console.error('❌ Error creando Payment Brick:', error);
+      onPaymentError?.(error);
+    });
   };
 
-  const processPayment = async (formData, preferenceId) => {
-  setLoading(true);
-  try {
-    const paymentEmail = formData.payer?.email || memoizedPersonalInfo.email;
+  // ✅ Fallback - método directo (solo si no se usa onPaymentSubmit)
+  const processPaymentDirect = async (formData) => {
+    console.log('⚠️ Usando procesamiento directo (fallback)');
     
-    if (!paymentEmail) {
-      throw new Error('Email requerido para el pago');
+    // Para métodos de redirección, crear preference
+    if (!formData.payment_method_id || 
+        formData.payment_method_id === 'account_money' ||
+        !formData.token) {
+      
+      console.log('🔄 Método de redirección - creando preference...');
+      await createAndRedirectToPreference(formData);
+      
+    } else {
+      // Para tarjetas, procesar directamente
+      console.log('💳 Método con token - procesando...');
+      await processDirectPayment(formData);
     }
+  };
 
+  const createAndRedirectToPreference = async (formData) => {
+    const preferenceData = {
+      totalPrice: amount,
+      description,
+      quantity: 1,
+      customerMail: memoizedPersonalInfo.email,
+      customerName: memoizedPersonalInfo.name,
+      // ❌ Sin externalReference porque no hay orden creada aún
+    };
+
+    const response = await fetch('/api/mercadopago/create-preference', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(preferenceData)
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Error creando preferencia');
+
+    window.location.href = data.checkoutUrl || data.sandboxUrl;
+  };
+
+  const processDirectPayment = async (formData) => {
     const paymentFormData = {
       token: formData.token,
-      email: paymentEmail,
+      email: formData.payerEmail,
       installments: formData.installments || 1,
       payment_method_id: formData.payment_method_id,
       issuer_id: formData.issuer_id,
@@ -174,16 +181,14 @@ const MercadoPagoPayment = ({
       first_name: memoizedPersonalInfo.name?.split(' ')[0] || ''
     };
 
-    console.log('Datos limpios enviados:', paymentFormData);
-
     const mpResponse = await fetch('/api/mercadopago/process-payment', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
         amount, 
         description, 
-        formData: paymentFormData,
-        preferenceId 
+        // ❌ Sin externalReference porque no hay orden creada aún
+        formData: paymentFormData
       })
     });
 
@@ -195,13 +200,7 @@ const MercadoPagoPayment = ({
     } else {
       onPaymentError?.(result);
     }
-  } catch (error) {
-    console.error('Error procesando pago:', error);
-    onPaymentError?.(error);
-  } finally { 
-    setLoading(false); 
-  }
-};
+  };
 
   // Cleanup brick
   useEffect(() => () => {
@@ -226,7 +225,7 @@ const MercadoPagoPayment = ({
         {loading && (
           <div className="flex flex-col justify-center items-center h-40 gap-3">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <span className="text-gray-600">Cargando formulario de pago seguro...</span>
+            <span className="text-gray-600">Procesando pago seguro...</span>
           </div>
         )}
       </div>
