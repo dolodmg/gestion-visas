@@ -19,7 +19,7 @@ const OrderHeader = ({ serviceName }) => {
                     {serviceName}
                 </div>
                 <div className="text-sm text-gray-600">
-                    {serviceType == 'familiar' ? 'Servicios para grupo familiar' : 'Servicio individual'}
+                    {serviceType == 'family' ? 'Servicios para grupo familiar' : 'Servicio individual'}
                 </div>
             </div>
         </div>

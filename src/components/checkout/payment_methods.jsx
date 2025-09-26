@@ -10,8 +10,12 @@ const PaymentMethods = ({
   personalInfo,
   onPaymentSuccess,
   onPaymentError,
-  isPersonalInfoValid
+  isPersonalInfoValid,
+  externalReference,
+  showPaymentForm
 }) => {
+  
+  const isPaymentEnabled = isPersonalInfoValid && externalReference;
   return (
     <div className={`${inter.className} `}>
       <div className="flex items-center gap-2 pb-4">
@@ -20,17 +24,33 @@ const PaymentMethods = ({
           Medios de pago
         </h2>
       </div>
-      <div className={`relative ${!isPersonalInfoValid ? 'opacity-50 pointer-events-none' : ''}`}>
+      {!showPaymentForm ? (
+        // Mostrar mensaje de completar formulario
+        <div className="relative opacity-50 pointer-events-none">
+          <div className="p-4 bg-gray-50 text-gray-600 rounded-lg text-center">
+            Complete los datos personales para habilitar los medios de pago
+          </div>
+        </div>
+      ) : !externalReference ? (
+        // Mostrar que se está creando la orden
+        <div className="p-4 bg-blue-50 text-blue-700 rounded-lg text-center">
+          <div className="flex items-center justify-center gap-2">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+            Preparando orden de pago...
+          </div>
+        </div>
+      ) : (
+        // Mostrar formulario de pago
         <MercadoPagoPayment
           amount={amount}
           description={description}
           personalInfo={personalInfo}
           paymentType="brick"
+          externalReference={externalReference}
           onPaymentSuccess={onPaymentSuccess}
           onPaymentError={onPaymentError}
         />
-</div>
-
+      )}
     </div>
   );
 };
