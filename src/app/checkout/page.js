@@ -61,12 +61,21 @@ const CheckoutPageContent = () => {
 
   const handlePaymentSuccess = async (payment) => {
     console.log('Pago exitoso:', payment);
-    router.push(`/payment/success`);
+     router.push(`/payment/success?payment_id=${payment.paymentId}&idOrder=${payment.idOrder}`);
   };
 
+  const handlePaymentPending = (payment) => {
+    console.log('Pago pendiente:', payment);
+    const paymentId = payment?.paymentId || 'desconocido';
+    const idOrder = payment?.idOrder || 'desconocido';
+    router.push(`/payment/pending?payment_id=${paymentId}&idOrder=${idOrder}`);
+  };
+  
   const handlePaymentError = (error) => {
     console.error('Error en el pago:', error);
-    router.push(`/payment/failure`);
+    const paymentId = error?.paymentId || 'desconocido';
+    const idOrder = error?.idOrder || 'desconocido';
+    router.push(`/payment/failure?payment_id=${paymentId}&idOrder=${idOrder}`);
   };
 
   // Calcular precios
@@ -92,6 +101,7 @@ const CheckoutPageContent = () => {
             pricing={pricing}
             coupon={coupon}
             onPaymentSuccess={handlePaymentSuccess}
+            onPaymentPending={handlePaymentPending}
             onPaymentError={handlePaymentError}
           />
         );

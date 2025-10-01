@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Zap, Shield, MessageCircle } from "lucide-react";
+import { Zap, MessageCircle } from "lucide-react";
 
 const features = [
   {
@@ -15,12 +15,6 @@ const features = [
       "Convertimos formularios complejos en pasos simples que podés completar desde casa.",
   },
   {
-    icon: <Shield className="w-6 h-6 text-green-500" />,
-    title: "Acompañamiento total",
-    description:
-      "Te guiamos desde el primer paso hasta que tengas tu visa aprobada en la mano.",
-  },
-  {
     icon: <MessageCircle className="w-6 h-6 text-purple-500" />,
     title: "Soporte humano",
     description:
@@ -30,7 +24,7 @@ const features = [
 
 export default function FeaturesGrid() {
   return (
-    <div className="grid gap-14 sm:grid-cols-2 lg:grid-cols-4 mt-10 mx-10">
+    <div className="grid gap-30 sm:grid-cols-2 lg:grid-cols-3 mt-10 mx-20">
       {features.map((feature, index) => (
         <Card key={index} className="p-4 text-center bg-[#212020] border-none drop-shadow-lg">
           <CardContent className="flex flex-col items-center gap-2 text-white">

@@ -127,6 +127,32 @@ const createOrder = useCallback(async (serviceData, couponData) => {
   }
 }, [state.personalInfo]);
 
+const updateOrder = async (orderId, updatedData) => {
+  try {
+    console.log('🔄 Actualizando orden:', orderId);
+    
+    const response = await fetch(`/api/orders/${orderId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedData),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Error actualizando orden');
+    }
+
+    const data = await response.json();
+    console.log('✅ Orden actualizada:', data);
+    return data;
+  } catch (error) {
+    console.error('❌ Error actualizando orden:', error);
+    throw error;
+  }
+};
+
   const value = {
     ...state,
     STEPS,
@@ -136,7 +162,8 @@ const createOrder = useCallback(async (serviceData, couponData) => {
     prevStep,
     updatePersonalInfo,
     createOrder,
-    dispatch
+    dispatch,
+    updateOrder
   };
 
   return (
