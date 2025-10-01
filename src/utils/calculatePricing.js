@@ -1,9 +1,11 @@
-export function calculatePricing(quantity, service, coupon) {
+export function calculatePricing(quantity, service, coupon, includeVideocall = false) {
+   const VIDEOCALL_PRICE = 10.00;
   const pricePerPerson = service.pricePerPerson;
   const subtotal = quantity * pricePerPerson;
+  const subtotalWithAddons = subtotal + (includeVideocall ? VIDEOCALL_PRICE : 0);
   let discount = 0;
   let discountPercentage = 0;
-  let total = subtotal;
+  let total = subtotalWithAddons; 
   let savings = 0;
   let savingsPercentage = 0;
 
@@ -21,17 +23,19 @@ export function calculatePricing(quantity, service, coupon) {
   // Aplicar cupón en cualquier tipo de servicio
   if (coupon && coupon.active) {
     discountPercentage = coupon.discount;
-    discount = subtotal * (discountPercentage / 100);
-    total = subtotal - discount;
+    discount = subtotalWithAddons * (discountPercentage / 100);
+    total = subtotalWithAddons - discount;
   }
 
   return {
     subtotal,
+    videocallPrice: includeVideocall ? VIDEOCALL_PRICE : 0,
     discount,
     discountPercentage,
     total,
     pricePerPerson,
     savings,
     savingsPercentage,
+    includeVideocall
   };
 }

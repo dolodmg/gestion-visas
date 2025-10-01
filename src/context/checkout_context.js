@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, useCallback } from 'react';
+import { createContext, useContext, useReducer, useCallback, useState } from 'react';
 
 const CheckoutContext = createContext();
 
@@ -57,6 +57,7 @@ function checkoutReducer(state, action) {
 
 export function CheckoutProvider({ children }) {
   const [state, dispatch] = useReducer(checkoutReducer, initialState);
+  const [includeVideocall, setIncludeVideocall] = useState(false);
 
   // Validaciones
   const isPersonalInfoValid = useCallback(() => {
@@ -92,40 +93,47 @@ export function CheckoutProvider({ children }) {
     dispatch({ type: 'UPDATE_PERSONAL_INFO', payload: updates });
   }, []);
 
-const createOrder = useCallback(async (serviceData, couponData) => {
-  dispatch({ type: 'SET_LOADING', payload: true });
-  dispatch({ type: 'SET_ERROR', payload: null });
 
-  try {
-    const orderPayload = {
-      idService: serviceData.idService,
-      customerName: state.personalInfo.nombre,
-      customerLastname: state.personalInfo.apellido,
-      customerMail: state.personalInfo.email,
-      customerPhone: state.personalInfo.telefono,
-      couponCode: couponData?.active ? couponData.code : null,
-      requestedQuantity: serviceData.quantity
-    };
+  const createOrder = useCallback(async (serviceData, couponData) => {
+    dispatch({ type: 'SET_LOADING', payload: true });
+    dispatch({ type: 'SET_ERROR', payload: null });
 
-    const response = await fetch('http://localhost:8080/api/orders', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(orderPayload)
-    });
+    try {
+      const orderPayload = {
+        idService: serviceData.idService,
+        customerName: state.personalInfo.nombre,
+        customerLastname: state.personalInfo.apellido,
+        customerMail: state.personalInfo.email,
+        customerPhone: state.personalInfo.telefono,
+        couponCode: couponData?.active ? couponData.couponCode : null,
+        requestedQuantity: serviceData.quantity,
+        includeVideocall: includeVideocall 
+      };
 
-    if (!response.ok) throw new Error('Error creando orden');
-    
-    const orderData = await response.json();
-    dispatch({ type: 'SET_ORDER', payload: orderData }); 
-    
-    return orderData;
-  } catch (error) {
-    dispatch({ type: 'SET_ERROR', payload: error.message });
-    throw error;
-  } finally {
-    dispatch({ type: 'SET_LOADING', payload: false });
-  }
-}, [state.personalInfo]);
+      console.log('📦 Enviando orden:', orderPayload);
+
+      const response = await fetch('http://localhost:8080/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderPayload)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Error creando orden');
+      }
+      
+      const orderData = await response.json();
+      dispatch({ type: 'SET_ORDER', payload: orderData }); 
+      
+      return orderData;
+    } catch (error) {
+      dispatch({ type: 'SET_ERROR', payload: error.message });
+      throw error;
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  }, [state.personalInfo, includeVideocall]);
 
 const updateOrder = async (orderId, updatedData) => {
   try {
@@ -162,6 +170,8 @@ const updateOrder = async (orderId, updatedData) => {
     prevStep,
     updatePersonalInfo,
     createOrder,
+    includeVideocall,
+    setIncludeVideocall,
     dispatch,
     updateOrder
   };

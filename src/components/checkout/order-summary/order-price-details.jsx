@@ -13,13 +13,21 @@ const OrderPriceDetails = ({ pricing, quantity, service }) => {
   const { currency: totalArs, loading: arsLoading, error: arsError } = useCurrency(pricing.total);
 
   return (
-    <div className="space-y-3 mb-6">
+    <div className="space-y-2 mb-6">
       {serviceType === 'family' ? (
         <>
           <div className="flex justify-between text-sm text-gray-600">
             <span>Subtotal ({quantity} personas)</span>
             <span>${pricing.subtotal.toFixed(2)} USD</span>
           </div>
+          {pricing.includeVideocall && pricing.videocallPrice > 0 && (
+            <div className="flex justify-between text-sm text-amber-800 font-medium">
+              <span>
+                Videollamada personalizada
+              </span>
+              <span>+${pricing.videocallPrice.toFixed(2)} USD</span>
+            </div>
+          )}
         </>
       ) : (
         <div className="flex justify-between text-sm text-gray-600">

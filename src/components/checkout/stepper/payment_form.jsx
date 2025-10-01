@@ -6,7 +6,7 @@ const PaymentForm = ({
   personalInfo,
   preferenceId,
   orderData,
-  totalPriceArs,
+  totalPriceArs, 
   onPaymentSubmit, 
   onPaymentSuccess,
   onPaymentPending, 
@@ -17,7 +17,7 @@ const PaymentForm = ({
       <h3 className="font-medium text-gray-900">Completa tu pago</h3>
       
       <MercadoPagoPayment
-        amount={totalPriceArs || pricing?.total || 0}
+        amount={totalPriceArs || 0} 
         description={service?.serviceName || 'Servicio'}
         personalInfo={personalInfo}
         preferenceId={preferenceId}
