@@ -24,6 +24,7 @@ const CheckoutPageContent = () => {
   const [quantity, setQuantity] = useState(1);
   const [couponCode, setCouponCode] = useState('');
   const [couponTouched, setCouponTouched] = useState(false);
+  const [includeVideocall, setIncludeVideocall] = useState(false);
   const { coupon, loading: couponLoading, error: couponError } = useCoupon(couponCode);
   
   // Context del checkout
@@ -79,7 +80,7 @@ const CheckoutPageContent = () => {
   };
 
   // Calcular precios
-  const pricing = service ? calculatePricing(quantity, service, coupon) : null;
+  const pricing = service ? calculatePricing(quantity, service, coupon, includeVideocall) : null;
 
   if (loading) return <div className="p-8">Cargando...</div>;
   if (error) return <div className="p-8 text-red-500">Error: {error}</div>;
@@ -123,13 +124,15 @@ const CheckoutPageContent = () => {
           <Stepper currentStep={currentStep} />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-8 mb-2">
           {/* Order Summary primero en mobile, a la derecha en desktop */}
           <div className="lg:col-span-1 order-1 md:order-2">
             <OrderSummary 
               service={service}
               quantity={quantity}
               pricing={pricing}
+              includeVideocall={includeVideocall}
+              onSelectionChange={setIncludeVideocall}
               onQuantityChange={handleQuantityChange}
               couponStatus={
                 !couponTouched 

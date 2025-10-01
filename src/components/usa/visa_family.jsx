@@ -14,7 +14,7 @@ const VisaFamily = () => {
   const price = "Desde $75 USD";
   const image = "/images/usa_flag.png";
   const fallback = "USA";
-  const handleClick = () => router.push('/checkout?plan=2');
+  const handleClick = () => router.push('/checkout?plan=3');
 
   return (
     <div className={`${inter.className} bg-gradient-to-br from-[#212020] to-[#2a2a2a] rounded-2xl p-6 sm:p-8 w-full max-w-md text-white relative border-2 border-[#22c55e] md:hover:shadow-2xl md:hover:-translate-y-2 transition-all duration-300`}>

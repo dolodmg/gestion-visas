@@ -33,9 +33,10 @@ const PaymentStep = ({ service, pricing, coupon, onPaymentSuccess, onPaymentPend
       try {
         const order = await createOrder(service, coupon);
         setOrderData(order);
-        setTotalPriceArs(order.totalPriceArs);
+        setTotalPriceArs(order.totalPriceArs); 
+        
         const preferenceData = {
-          totalPrice: pricing.total,
+          totalPrice: order.totalPrice, 
           description: service.serviceName,
           quantity: service.quantity || 1,
           customerMail: personalInfo.email,

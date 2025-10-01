@@ -1,8 +1,8 @@
 import OrderHeader from './order-header';
 import OrderQuantitySelector from './order-quantity-selector';
 import OrderPriceDetails from './order-price-details';
-import OrderFeatures from './order-features';
 import OrderCouponInput from './order-coupon-input';
+import VideocallAddon from './video_call_option';
 
 const getServiceType = (serviceName) => {
   if (serviceName?.toLowerCase().includes('familiar')) return 'family';
@@ -10,7 +10,17 @@ const getServiceType = (serviceName) => {
   return 'standard';
 };
 
-const OrderSummary = ({ service, quantity, pricing, onQuantityChange, couponStatus, onValidateCoupon, couponLoading }) => {
+const OrderSummary = ({ 
+   service, 
+  quantity, 
+  pricing, 
+  includeVideocall,      
+  onSelectionChange,
+  onQuantityChange, 
+  couponStatus, 
+  onValidateCoupon, 
+  couponLoading 
+ }) => {
   if (!service || !pricing) {
     return (
       <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm sticky top-4 lg:top-8 text-center text-gray-400">
@@ -19,8 +29,10 @@ const OrderSummary = ({ service, quantity, pricing, onQuantityChange, couponStat
       </div>
     );
   }
+
   const serviceType = getServiceType(service?.serviceName);
   const color = serviceType === 'family' ? 'green' : serviceType === 'premium' ? 'yellow' : 'blue';
+
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm sticky md:top-8 mb-2">
       {/* Header */}
@@ -36,6 +48,15 @@ const OrderSummary = ({ service, quantity, pricing, onQuantityChange, couponStat
           max={service.maxQuantity || 10}
         />
       )}
+      {/*Checkbox de videollamada */}
+      {serviceType === 'family' && (
+        <div className="mb-4">
+          <VideocallAddon 
+            isSelected={includeVideocall} 
+            onSelectionChange={onSelectionChange}
+          />
+        </div> 
+      )}
 
       {/* Input de cupón */}
       <OrderCouponInput
@@ -45,13 +66,7 @@ const OrderSummary = ({ service, quantity, pricing, onQuantityChange, couponStat
       />
 
       {/* Precios */}
-      <OrderPriceDetails pricing={pricing} quantity={quantity} service={service} />
-
-      {/* Features */}
-      <OrderFeatures
-        serviceName={service.serviceName}
-        color={color}
-      />
+      <OrderPriceDetails pricing={pricing} quantity={quantity} service={service}  />
 
       {/* Info adicional para familiar */}
       {serviceType === 'family' && (

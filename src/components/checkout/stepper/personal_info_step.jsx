@@ -99,7 +99,7 @@ const PersonalInfoStep = () => {
             className={`
               px-6 py-2 rounded-xl font-normal transition-colors
               ${isPersonalInfoValid
-                ? 'bg-slate-900 text-white hover:bg-slate-950'
+                ? 'bg-slate-900 text-white hover:bg-slate-950 hover:cursor-pointer'
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }
             `}
