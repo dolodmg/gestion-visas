@@ -4,14 +4,15 @@ import { Send } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { useSendMail } from "@/hooks/useMail";
 
 const ContactForm = () => {
+  const { sendMail, loading, error } = useSendMail();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     message: ''
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleChange = (e) => {
@@ -22,22 +23,20 @@ const ContactForm = () => {
     }));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     if (!isFormValid) return;
 
-    setIsSubmitting(true);
-
-    // Simular envío
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-
-    // Reset después de 3 segundos
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({ name: '', email: '', message: '' });
-    }, 3000);
+    try {
+      await sendMail(formData);
+      setIsSubmitted(true);
+      setFormData({ name: "", email: "", message: "" });
+      setTimeout(() => {
+        setIsSubmitted(false);
+      }, 3000);
+    } catch (err) {
+      console.error("Error enviando mail:", err);
+    }
   };
 
   const isFormValid =
@@ -70,8 +69,7 @@ const ContactForm = () => {
             <div className="text-sm sm:text-base text-white font-normal pt-4 max-w-2xl mx-auto pb-6 leading-relaxed px-2">
               <p>Escribinos tu consulta y te responderemos a la brevedad.</p>
               <p className="mt-2">
-                Nuestro equipo puede ayudarte con visas, permisos y otros
-                trámites que pronto estarán disponibles.
+                Nuestro equipo está listo para responder tus consultas y orientarte en los detalles del proceso de tu visa, para que avances con seguridad y confianza.
               </p>
             </div>
 
@@ -105,14 +103,14 @@ const ContactForm = () => {
 
               <Button
                 className={`w-full font-light text-white mt-6 flex items-center justify-center gap-2 ${
-                  isFormValid && !isSubmitting
-                    ? 'bg-[#BD593A] hover:bg-[#a94b2e]'
-                    : 'bg-gray-600 cursor-not-allowed'
+                  isFormValid && !loading
+                    ? "bg-[#BD593A] hover:bg-[#a94b2e]"
+                    : "bg-gray-600 cursor-not-allowed"
                 }`}
-                disabled={!isFormValid || isSubmitting}
+                disabled={!isFormValid || loading}
                 onClick={handleSubmit}
               >
-                {isSubmitting ? (
+                {loading ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                     Enviando...
