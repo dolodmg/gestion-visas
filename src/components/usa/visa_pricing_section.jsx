@@ -51,6 +51,9 @@ const VisaPricingSection = () => {
             <VisaFamily />
           </div>
         </div>
+        <h3 className='text-zinc-200 font-light italic text-md text-center pt-8 '>Si estás interesado en otro tipo de visa, no dudes en consultarnos a nuestro mail: 
+          <span className='underline ml-1'>visaparaargentinos@gmail.com</span>
+        </h3>
       </div>
     </div>
   );
