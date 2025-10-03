@@ -11,6 +11,8 @@ import { CheckoutProvider, useCheckout } from '@/context/checkout_context';
 import { calculatePricing } from '@/utils/calculatePricing';
 import { useService } from '@/hooks/useServices';
 import { useCoupon } from '@/hooks/useCoupons';
+import CheckoutSkeleton from '@/components/checkout/checkout_skeleton';
+import ErrorPage from '@/components/common/error';
 
 const inter = Inter({ subsets: ['latin'], weight: ['400','500','700'] });
 
@@ -35,9 +37,14 @@ const CheckoutPageContent = () => {
   // Redirigir si no hay idService
   useEffect(() => {
     if (!idService) {
-      router.push('/visas-usa?error=invalid-plan');
+      return <ErrorPage 
+        title="Página no encontrada"
+        message="¡Ups! Parece que esta página se perdió en el camino."
+        errorCode="404"
+        showRefresh={false}
+      />  
     }
-  }, [idService, router]);
+  }, [idService]);
 
   // Inicializar cantidad según el servicio
   useEffect(() => {
@@ -82,8 +89,13 @@ const CheckoutPageContent = () => {
   // Calcular precios
   const pricing = service ? calculatePricing(quantity, service, coupon, includeVideocall) : null;
 
-  if (loading) return <div className="p-8">Cargando...</div>;
-  if (error) return <div className="p-8 text-red-500">Error: {error}</div>;
+  if (loading) return <CheckoutSkeleton />;
+  if (error) return <ErrorPage 
+    title="Página no encontrada"
+    message="¡Ups! Parece que esta página se perdió en el camino."
+    errorCode="404"
+    showRefresh={false}
+  />
   if (!service) return null;
 
   const renderCurrentStep = () => {
