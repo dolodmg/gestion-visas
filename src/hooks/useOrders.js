@@ -3,11 +3,14 @@ import { getOrderAction, createOrderAction } from '@/server/orders';
 
 export const useOrder = (idOrder) => {
   const [order, setOrder] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!idOrder) return;
+    if (!idOrder) {
+      setLoading(true);
+      return;
+    }
     const fetchOrder = async () => {
       setLoading(true);
       setError(null);
