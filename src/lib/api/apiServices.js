@@ -1,7 +1,7 @@
 import 'server-only'
 import { apiRequest } from '@/lib/apiRequest';
 
-const BASE_URL = 'http://localhost:8080/api/services';
+const BASE_URL = `${process.env.JAVA_BACKEND_URL}/api/services`;
 
 export async function getService(idService) { 
     return await apiRequest(`${BASE_URL}/${idService}`, 'GET', null, 'application/json', false);
