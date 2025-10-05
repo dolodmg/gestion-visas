@@ -39,7 +39,8 @@ const processPaymentWithOrder = async (formData, orderData, service, pricing) =>
   
   // Método con token (tarjetas de crédito/débito)
   else {
-  
+    console.log('💳 Procesando pago directo con tarjeta...');
+    
     const paymentFormData = {
       token: enrichedFormData.token,
       email: paymentEmail,
@@ -64,14 +65,33 @@ const processPaymentWithOrder = async (formData, orderData, service, pricing) =>
     });
 
     const result = await mpResponse.json();
-    console.log(mpResponse);
-    if (!mpResponse.ok) throw new Error(result.error || 'Error procesando el pago');
+    console.log('📊 Resultado del pago:', result);
     
-    return {
-      paymentId: result.id,
-      idOrder: orderData.idOrder,
-      status: result.status
-    };
+    // ✅ SOLUCIÓN: Redirigir según el estado del pago
+    if (result.status === 'approved') {
+      // Pago exitoso
+      console.log('✅ Pago aprobado, redirigiendo a success...');
+      window.location.href = `/payment/success?payment_id=${result.id}`;
+      return {
+        paymentId: result.id,
+        idOrder: orderData.idOrder,
+        status: result.status
+      };
+    } else if (result.status === 'pending' || result.status === 'in_process') {
+      // Pago pendiente
+      console.log('⏳ Pago pendiente, redirigiendo a pending...');
+      window.location.href = `/payment/pending?payment_id=${result.id}`;
+      return {
+        paymentId: result.id,
+        idOrder: orderData.idOrder,
+        status: result.status
+      };
+    } else {
+      // Pago rechazado o fallido
+      console.log('❌ Pago fallido, redirigiendo a failure...');
+      window.location.href = `/payment/failure?payment_id=${result.id}`;
+      throw new Error(result.status_detail || 'Pago rechazado');
+    }
   }
 };
 

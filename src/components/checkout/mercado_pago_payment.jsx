@@ -225,13 +225,17 @@ const MercadoPagoPayment = ({
     if (!mpResponse.ok) throw new Error(result.error || 'Error procesando el pago');
 
     if (result.status === 'approved') {
+      console.log('✅ Pago aprobado');
       onPaymentSuccess?.(result);
+      if (!onPaymentSuccess) {
+        window.location.href = `/payment/success?payment_id=${result.id}`;
+      }
     } else if (result.status === 'pending' || result.status === 'in_process') {
-      onPaymentPending?.(result); 
+      window.location.href = `/payment/pending?payment_id=${result.id}`;
     } else {
+      window.location.href = `/payment/failure?payment_id=${result.id || 'unknown'}`;
       onPaymentError?.(result);
     }
-
   };
 
   // Cleanup brick cuando el componente se desmonta
