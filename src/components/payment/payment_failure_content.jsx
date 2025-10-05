@@ -5,7 +5,6 @@ import { usePayment } from '@/hooks/usePayments';
 import { useOrder } from '@/hooks/useOrders';
 
 const inter = Inter({ subsets: ['latin'], weight: ['100','200','300','400','500','700','900'] });
-
 export default function PaymentFailure() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -13,21 +12,42 @@ export default function PaymentFailure() {
   const collectionId = searchParams.get('collection_id');
   const orderId = searchParams.get('order');
   
-  const isCancellation = collectionId === 'null' || paymentId === 'null' || !paymentId;
+  const isValidPaymentId = paymentId && 
+                          paymentId !== 'null' && 
+                          paymentId !== 'desconocido' && 
+                          !isNaN(Number(paymentId));
   
-  const { payment, loading: paymentLoading, error: paymentError } = usePayment(isCancellation ? null : paymentId);
-  const { order, loading: orderLoading, error: orderError } = useOrder(isCancellation && orderId ? orderId : null);
+  const isCancellation = collectionId === 'null' || 
+                        paymentId === 'null' || 
+                        !paymentId || 
+                        paymentId === 'desconocido';
+  
+  const { payment, loading: paymentLoading, error: paymentError } = usePayment(
+    isValidPaymentId ? paymentId : null
+  );
+  
+  const { order, loading: orderLoading, error: orderError } = useOrder(
+    isCancellation && orderId ? orderId : null
+  );
+  
+  console.log('🔍 Debug estado:', { 
+    paymentLoading, 
+    orderLoading, 
+    payment, 
+    error: paymentError 
+  });
   
   const loading = paymentLoading || orderLoading;
   const error = paymentError || orderError;
   const serviceId = payment?.idService || order?.idService;
 
-  if (loading && !isCancellation) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto"></div>
           <p className="mt-4 text-base sm:text-lg">Verificando pago...</p>
+          <p className="text-xs text-gray-500 mt-2">paymentLoading: {String(paymentLoading)}, orderLoading: {String(orderLoading)}</p>
         </div>
       </div>
     );
