@@ -7,7 +7,11 @@ export const usePayment = (paymentId) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!paymentId) return;
+    if (!paymentId || paymentId === 'unknown') {
+      setError('ID de pago no válido');
+      return;
+    }
+
     const verifyPayment = async () => {
       setLoading(true);
       setError(null);
@@ -15,11 +19,13 @@ export const usePayment = (paymentId) => {
         const data = await verifyPaymentAction(paymentId);
         setPayment(data);
       } catch (err) {
-        setError(error.message || "Error verificando pago");
+        console.error('Error verificando pago:', err);
+        setError(err?.message || "Error verificando pago");
       } finally {
         setLoading(false);
       }
     };
+
     verifyPayment();
   }, [paymentId]);
 
