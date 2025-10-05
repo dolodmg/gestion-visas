@@ -2,7 +2,6 @@
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Inter } from 'next/font/google';
 import { usePayment } from '@/hooks/usePayments';
-import { useOrder } from '@/hooks/useOrders';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -11,8 +10,6 @@ export default function PaymentFailure() {
   const router = useRouter();
 
   const paymentId = searchParams.get('payment_id');
-  const orderId = searchParams.get('order');
-
   const isCancellation =
     !paymentId || paymentId === 'null' || paymentId === 'desconocido';
 
@@ -22,15 +19,9 @@ export default function PaymentFailure() {
     error: paymentError,
   } = usePayment(isCancellation ? null : paymentId);
 
-  const {
-    order,
-    error: orderError,
-  } = useOrder(isCancellation && orderId ? orderId : null);
+  const error = paymentError;
+  const serviceId = payment?.idService;
 
-  const error = paymentError || orderError;
-  const serviceId = payment?.idService || order?.idService;
-
-  // ⬅️ Usamos SOLO paymentLoading
   if (paymentLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
@@ -49,46 +40,15 @@ export default function PaymentFailure() {
       <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl bg-white rounded-lg shadow-lg p-6 sm:p-8 text-center">
         {isCancellation ? (
           <>
-            <div className="w-14 h-14 sm:w-16 sm:h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg
-                className="w-7 h-7 sm:w-8 sm:h-8 text-yellow-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                />
-              </svg>
-            </div>
             <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
               Pago cancelado
             </h1>
             <p className="text-sm sm:text-base text-gray-600 mb-6">
-              No completaste el pago. Si tenés algún problema, podés intentarlo
-              nuevamente.
+              No completaste el pago. Podés intentarlo nuevamente.
             </p>
           </>
         ) : error ? (
           <>
-            <div className="w-14 h-14 sm:w-16 sm:h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg
-                className="w-7 h-7 sm:w-8 sm:h-8 text-red-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </div>
             <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
               Error verificando pago
             </h1>
@@ -96,27 +56,12 @@ export default function PaymentFailure() {
           </>
         ) : payment ? (
           <>
-            <div className="w-14 h-14 sm:w-16 sm:h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg
-                className="w-7 h-7 sm:w-8 sm:h-8 text-red-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </div>
             <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
               Pago rechazado
             </h1>
             <p className="text-sm sm:text-base text-gray-600 mb-2">
-              Tu pago fue rechazado. Por favor, verificá los datos de tu tarjeta
-              e intentá nuevamente.
+              Tu pago fue rechazado. Verificá los datos de tu tarjeta e intentá
+              nuevamente.
             </p>
             {payment.statusDetail && (
               <p className="text-xs sm:text-sm text-gray-500 mb-6">
@@ -135,9 +80,8 @@ export default function PaymentFailure() {
           </button>
           <button
             onClick={() => {
-              const planId = payment?.idService || serviceId;
-              if (planId) {
-                router.push(`/checkout?plan=${planId}`);
+              if (serviceId) {
+                router.push(`/checkout?plan=${serviceId}`);
               } else {
                 router.push('/');
               }
