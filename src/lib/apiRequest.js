@@ -13,7 +13,8 @@ export async function apiRequest(
 
     const options = {
       method,
-      headers: {}
+      headers: {},
+      signal: AbortSignal.timeout(30000)
     }
 
     if (token) {
