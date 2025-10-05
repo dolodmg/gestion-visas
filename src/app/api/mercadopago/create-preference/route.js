@@ -1,16 +1,16 @@
 // app/api/mercadopago/create-preference/route.js
 import { NextResponse } from 'next/server';
 
-const JAVA_BACKEND_URL = process.env.JAVA_BACKEND_URL || 'http://localhost:8080';
+const NEXT_PUBLIC_JAVA_BACKEND_URL = process.env.NEXT_PUBLIC_JAVA_BACKEND_URL || 'http://localhost:8080';
 
 export async function POST(request) {
   console.log('API route called');
   try {
     const body = await request.json();
     console.log('Body received:', body);
-    console.log('Backend URL:', JAVA_BACKEND_URL);
+    console.log('Backend URL:', NEXT_PUBLIC_JAVA_BACKEND_URL);
     
-    const response = await fetch(`${JAVA_BACKEND_URL}/api/mercadopago/create-preference`, {
+    const response = await fetch(`${NEXT_PUBLIC_JAVA_BACKEND_URL}/api/mercadopago/create-preference`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

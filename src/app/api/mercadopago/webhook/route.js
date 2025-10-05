@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const JAVA_BACKEND_URL = process.env.JAVA_BACKEND_URL;
+const NEXT_PUBLIC_JAVA_BACKEND_URL = process.env.NEXT_PUBLIC_JAVA_BACKEND_URL;
 
 export async function POST(request) {
   try {
@@ -14,7 +14,7 @@ export async function POST(request) {
       }
     });
 
-    const response = await fetch(`${JAVA_BACKEND_URL}/api/mercadopago/webhook`, {
+    const response = await fetch(`${NEXT_PUBLIC_JAVA_BACKEND_URL}/api/mercadopago/webhook`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
