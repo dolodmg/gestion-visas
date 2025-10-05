@@ -63,11 +63,6 @@ export default function PaymentFailure() {
               Tu pago fue rechazado. Verificá los datos de tu tarjeta e intentá
               nuevamente.
             </p>
-            {payment.statusDetail && (
-              <p className="text-xs sm:text-sm text-gray-500 mb-6">
-                Detalle: {payment.statusDetail}
-              </p>
-            )}
           </>
         ) : null}
 
