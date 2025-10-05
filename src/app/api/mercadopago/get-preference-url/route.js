@@ -1,7 +1,7 @@
 // app/api/mercadopago/get-preference-url/route.js
 import { NextResponse } from 'next/server';
 
-const NEXT_PUBLIC_JAVA_BACKEND_URL = process.env.NEXT_PUBLIC_JAVA_BACKEND_URL || 'http://localhost:8080';
+const NEXT_PUBLIC_JAVA_BACKEND_URL = process.env.NEXT_PUBLIC_JAVA_BACKEND_URL;
 
 export async function GET(request) {
   try {
