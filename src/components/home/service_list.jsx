@@ -34,11 +34,11 @@ const ServiceList = () => {
   ];
 
   return (
-    <div className="flex flex-col text-center gap-6 bg-gradient-to-br from-[#323232] via-[#212020] to-[#323232] w-full py-10 px-4">
-      <h1 className={`${inter.className} text-2xl md:text-3xl lg:text-4xl font-light text-teal-100 mb-4 tracking-wide`}>
+    <div className="flex flex-col text-center gap-2 md:gap-6 bg-gradient-to-br from-[#323232] via-[#212020] to-[#323232] w-full py-6 md:py-10 px-4">
+      <h1 className={`${inter.className} text-2xl md:text-3xl lg:text-4xl font-light text-teal-100 md:mb-4 tracking-wide`}>
         Nuestros Servicios
       </h1>
-      <p className="text-base md:text-lg text-zinc-300 max-w-2xl mx-auto">
+      <p className="mb-2 text-base md:text-lg text-zinc-300 max-w-2xl mx-auto">
         Te ayudamos con el proceso completo para obtener tu visa o autorización de viaje
       </p>
 
