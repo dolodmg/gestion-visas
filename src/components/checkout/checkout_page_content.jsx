@@ -7,7 +7,7 @@ import OrderSummary from '@/components/checkout/order-summary/order-summary';
 import Stepper from '@/components/checkout/stepper/stepper';
 import PersonalInfoStep from '@/components/checkout/stepper/personal_info_step';
 import PaymentStep from '@/components/checkout/stepper/payment_step';
-import { CheckoutProvider, useCheckout } from '@/context/checkout_context';
+import { useCheckout } from '@/context/checkout_context';
 import { calculatePricing } from '@/utils/calculatePricing';
 import { useService } from '@/hooks/useServices';
 import { useCoupon } from '@/hooks/useCoupons';
@@ -28,7 +28,7 @@ const CheckoutPageContent = () => {
   const [includeVideocall, setIncludeVideocall] = useState(false);
   const { coupon, loading: couponLoading, error: couponError } = useCoupon(couponCode);
   
-  const { currentStep, STEPS } = useCheckout();
+  const { currentStep, STEPS, setCoupon: setContextCoupon } = useCheckout();
 
   const isCouponValid = coupon && coupon.active && new Date(coupon.expirationDate) > new Date();
 
@@ -53,6 +53,15 @@ const CheckoutPageContent = () => {
     }
   }, [service]);
 
+  // Actualizar cupón en el contexto cuando cambia
+  useEffect(() => {
+    if (isCouponValid) {
+      setContextCoupon(coupon);
+    } else {
+      setContextCoupon(null);
+    }
+  }, [coupon, isCouponValid, setContextCoupon]);
+
   const handleValidateCoupon = (code) => {
     setCouponTouched(true);
     setCouponCode(code);
@@ -65,7 +74,7 @@ const CheckoutPageContent = () => {
 
   const handlePaymentSuccess = async (payment) => {
     console.log('Pago exitoso:', payment);
-     router.push(`/payment/success?payment_id=${payment.paymentId}&idOrder=${payment.idOrder}`);
+    router.push(`/payment/success?payment_id=${payment.paymentId}&idOrder=${payment.idOrder}`);
   };
 
   const handlePaymentPending = (payment) => {
@@ -82,7 +91,6 @@ const CheckoutPageContent = () => {
     router.push(`/payment/failure?payment_id=${paymentId}&idOrder=${idOrder}`);
   };
 
-  // Calcular precios
   const pricing = service ? calculatePricing(quantity, service, coupon, includeVideocall) : null;
 
   if (loading) return <CheckoutSkeleton />;
@@ -108,7 +116,7 @@ const CheckoutPageContent = () => {
               idService: service.idService
             }}
             pricing={pricing}
-            coupon={coupon}
+            coupon={isCouponValid ? coupon : null}
             onPaymentSuccess={handlePaymentSuccess}
             onPaymentPending={handlePaymentPending}
             onPaymentError={handlePaymentError}
@@ -133,7 +141,6 @@ const CheckoutPageContent = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-8 mb-2">
-          {/* Order Summary primero en mobile, a la derecha en desktop */}
           <div className="lg:col-span-1 order-1 md:order-2">
             <OrderSummary 
               service={service}
@@ -154,7 +161,6 @@ const CheckoutPageContent = () => {
             />
           </div>
 
-          {/* Steps después en mobile, a la izquierda en desktop */}
           <div className="lg:col-span-2 order-2 md:order-1">
             <div className="bg-white rounded-xl p-6 shadow-sm">
               {renderCurrentStep()}

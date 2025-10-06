@@ -10,13 +10,15 @@ import processPaymentWithOrder from '@/components/checkout/stepper/process_payme
 const inter = Inter({ subsets: ['latin'], weight: ['400','500','700'] });
 
 const PaymentStep = ({ service, pricing, coupon, onPaymentSuccess, onPaymentPending, onPaymentError }) => {
-  const { personalInfo, prevStep, createOrder, updateOrder } = useCheckout();
+  const { personalInfo, prevStep, createOrder, updateOrder, order: contextOrder } = useCheckout();
   const [orderData, setOrderData] = useState(null);
   const [preferenceId, setPreferenceId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const isInitializingRef = useRef(false); 
   const [totalPriceArs, setTotalPriceArs] = useState(null);
+  const previousCouponRef = useRef(null);
 
+  // Inicializar orden cuando entramos al paso de pago
   useEffect(() => {
     const initializeOrder = async () => {
       if (orderData || isInitializingRef.current) {
@@ -31,9 +33,19 @@ const PaymentStep = ({ service, pricing, coupon, onPaymentSuccess, onPaymentPend
       setIsLoading(true);
       
       try {
-        const order = await createOrder(service, coupon);
+        // Si ya existe una orden en el contexto, la usamos
+        let order;
+        if (contextOrder?.orderId) {
+          console.log('✅ Usando orden existente:', contextOrder.orderId);
+          order = contextOrder;
+        } else {
+          console.log('🆕 Creando nueva orden');
+          order = await createOrder(service, coupon);
+        }
+        
         setOrderData(order);
         setTotalPriceArs(order.totalPriceArs); 
+        previousCouponRef.current = coupon?.couponCode || null;
         
         const preferenceData = {
           totalPrice: order.totalPrice, 
@@ -72,9 +84,67 @@ const PaymentStep = ({ service, pricing, coupon, onPaymentSuccess, onPaymentPend
     initializeOrder();
   }, []); 
 
+  // Detectar cambios en el cupón y actualizar la orden
+  useEffect(() => {
+    const handleCouponChange = async () => {
+      if (!orderData?.orderId) return;
+      
+      const currentCoupon = coupon?.couponCode || null;
+      const previousCoupon = previousCouponRef.current;
+      
+      // Si el cupón cambió
+      if (currentCoupon !== previousCoupon) {
+        console.log('🔄 Cupón cambió, actualizando orden...', { 
+          previous: previousCoupon, 
+          current: currentCoupon 
+        });
+        
+        setIsLoading(true);
+        
+        try {
+          // Actualizar la orden con el nuevo cupón
+          const updatedOrder = await updateOrder(orderData.orderId, service, coupon);
+          setOrderData(updatedOrder);
+          setTotalPriceArs(updatedOrder.totalPriceArs);
+          previousCouponRef.current = currentCoupon;
+          
+          // Crear nueva preference con el precio actualizado
+          const preferenceData = {
+            totalPrice: updatedOrder.totalPrice, 
+            description: service.serviceName,
+            quantity: service.quantity || 1,
+            customerMail: personalInfo.email,
+            customerName: `${personalInfo.nombre} ${personalInfo.apellido}`,
+            externalReference: updatedOrder.externalReference
+          };
+
+          const response = await fetch('/api/mercadopago/create-preference', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(preferenceData)
+          });
+
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.error || 'Error actualizando preferencia');
+
+          setPreferenceId(data.preferenceId);
+          console.log('✅ Orden y preference actualizadas con nuevo cupón');
+          
+        } catch (error) {
+          console.error('❌ Error actualizando orden con cupón:', error);
+          onPaymentError?.(error);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    handleCouponChange();
+  }, [coupon, orderData, service, personalInfo, updateOrder, onPaymentError]);
+
   const handleGoBack = async () => {
     if (orderData) {
-      console.log('💡 Usuario vuelve atrás - orden quedará como DRAFT para posible actualización');
+      console.log('💡 Usuario vuelve atrás - orden quedará disponible para actualización');
     }
     prevStep();
   };
@@ -113,7 +183,9 @@ const PaymentStep = ({ service, pricing, coupon, onPaymentSuccess, onPaymentPend
         <div className="p-8 bg-blue-50 rounded-lg text-center mt-6">
           <div className="flex items-center justify-center gap-2">
             <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
-            <span className="text-blue-700">Preparando opciones de pago...</span>
+            <span className="text-blue-700">
+              {!preferenceId ? 'Preparando opciones de pago...' : 'Actualizando precio...'}
+            </span>
           </div>
         </div>
       ) : (

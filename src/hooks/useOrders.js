@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getOrderAction, createOrderAction } from '@/server/orders';
+import { getOrderAction, createOrderAction, updateOrderAction } from '@/server/orders';
 
 export const useOrder = (idOrder) => {
   const [order, setOrder] = useState(null);
@@ -46,4 +46,25 @@ export const useCreateOrder = () => {
   };
 
   return { createOrder, order, loading, error };
+};
+
+export const useUpdateOrder = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const updateOrder = async (idOrder, orderData) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await updateOrderAction(idOrder, orderData);
+      return data;
+    } catch (error) {
+      setError(error.message);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { updateOrder, loading, error };
 };
