@@ -28,7 +28,7 @@ const CheckoutPageContent = () => {
   const [includeVideocall, setIncludeVideocall] = useState(false);
   const { coupon, loading: couponLoading, error: couponError } = useCoupon(couponCode);
   
-  const { currentStep, STEPS, coupon: contextCoupon, setCoupon: setContextCoupon } = useCheckout();
+  const { currentStep, STEPS, coupon: contextCoupon, setCoupon } = useCheckout();
 
   const isCouponValid = coupon && coupon.active && new Date(coupon.expirationDate) > new Date();
 
@@ -55,14 +55,14 @@ const CheckoutPageContent = () => {
 
   // 🔥 CRÍTICO: Actualizar cupón en el contexto cuando cambia o se valida
   useEffect(() => {
-    if (couponTouched && isCouponValid) {
-      console.log('✅ Guardando cupón válido en contexto:', coupon.couponCode);
-      setContextCoupon(coupon);
-    } else if (couponTouched && !isCouponValid) {
-      console.log('❌ Cupón inválido, limpiando contexto');
-      setContextCoupon(null);
-    }
-  }, [coupon, isCouponValid, couponTouched, setContextCoupon]);
+  if (couponTouched && isCouponValid) {
+    console.log('✅ Guardando cupón válido en contexto:', coupon.couponCode);
+    setCoupon(coupon); // Usar setCoupon directamente
+  } else if (couponTouched && !isCouponValid) {
+    console.log('❌ Cupón inválido, limpiando contexto');
+    setCoupon(null);
+  }
+}, [coupon, isCouponValid, couponTouched, setCoupon]);
 
   const handleValidateCoupon = (code) => {
     setCouponTouched(true);
