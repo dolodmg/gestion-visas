@@ -24,27 +24,27 @@ const OrderQuantitySelector = ({ quantity, onQuantityChange, allowsVariableQuant
   return (
     <div className="mb-4">
       <label className="font-medium text-sm block mb-2">Cantidad de personas</label>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center">
         <button
           onClick={handleDecrease}
           disabled={quantity <= min}
-          className="w-10 h-10 flex items-center justify-center rounded-lg border-2 border-gray-300 bg-white disabled:opacity-40 disabled:cursor-not-allowed active:bg-gray-100 transition-colors"
+          className="w-6 h-6 flex items-center justify-center rounded-lg border-2 border-gray-300 bg-white disabled:opacity-40 disabled:cursor-not-allowed active:bg-gray-100 transition-colors"
           aria-label="Disminuir cantidad"
         >
-          <Minus className="w-5 h-5" />
+          <Minus className="w-3 h-3" />
         </button>
         
-        <span className="text-xl font-semibold min-w-[2rem] text-center">
+        <span className="text-md font-semibold min-w-[2rem] text-center">
           {quantity}
         </span>
         
         <button
           onClick={handleIncrease}
           disabled={quantity >= max}
-          className="w-10 h-10 flex items-center justify-center rounded-lg border-2 border-gray-300 bg-white disabled:opacity-40 disabled:cursor-not-allowed active:bg-gray-100 transition-colors"
+          className="w-6 h-6 flex items-center justify-center rounded-lg border-2 border-gray-300 bg-white disabled:opacity-40 disabled:cursor-not-allowed active:bg-gray-100 transition-colors"
           aria-label="Aumentar cantidad"
         >
-          <Plus className="w-5 h-5" />
+          <Plus className="w-3 h-3" />
         </button>
       </div>
     </div>
