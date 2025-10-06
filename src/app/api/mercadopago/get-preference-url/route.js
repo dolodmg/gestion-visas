@@ -1,4 +1,3 @@
-// app/api/mercadopago/get-preference-url/route.js
 import { NextResponse } from 'next/server';
 
 const NEXT_PUBLIC_JAVA_BACKEND_URL = process.env.NEXT_PUBLIC_JAVA_BACKEND_URL;
@@ -15,9 +14,6 @@ export async function GET(request) {
       );
     }
 
-    console.log('📤 Obteniendo URL para preference:', preferenceId);
-
-    // Consultar al backend por la URL de la preference
     const response = await fetch(
       `${NEXT_PUBLIC_JAVA_BACKEND_URL}/api/mercadopago/preference/${preferenceId}`,
       {
@@ -30,7 +26,6 @@ export async function GET(request) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('❌ Error del backend:', errorText);
       return NextResponse.json(
         { error: `Error obteniendo preference: ${errorText}` },
         { status: response.status }
@@ -38,11 +33,9 @@ export async function GET(request) {
     }
 
     const data = await response.json();
-    console.log('✅ URL obtenida:', data);
     
     return NextResponse.json(data);
   } catch (error) {
-    console.error('❌ Error en get-preference-url:', error);
     return NextResponse.json(
       { error: 'Error del servidor: ' + error.message },
       { status: 500 }

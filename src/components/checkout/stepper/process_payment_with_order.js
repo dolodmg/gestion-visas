@@ -12,8 +12,6 @@ const processPaymentWithOrder = async (formData, orderData, service, pricing) =>
       enrichedFormData.payment_method_id === 'account_money' || 
       !enrichedFormData.token) {
     
-    console.log('🔄 Método de redirección - creando preference...');
-    
     const preferenceData = {
       totalPrice: pricing.total,
       description: service.serviceName,
@@ -39,7 +37,6 @@ const processPaymentWithOrder = async (formData, orderData, service, pricing) =>
   
   // Método con token (tarjetas de crédito/débito)
   else {
-    console.log('💳 Procesando pago directo con tarjeta...');
     
     const paymentFormData = {
       token: enrichedFormData.token,
@@ -65,12 +62,7 @@ const processPaymentWithOrder = async (formData, orderData, service, pricing) =>
     });
 
     const result = await mpResponse.json();
-    console.log('📊 Resultado del pago:', result);
-    
-    // ✅ SOLUCIÓN: Redirigir según el estado del pago
     if (result.status === 'approved') {
-      // Pago exitoso
-      console.log('✅ Pago aprobado, redirigiendo a success...');
       window.location.href = `/payment/success?payment_id=${result.id}`;
       return {
         paymentId: result.id,
@@ -78,8 +70,6 @@ const processPaymentWithOrder = async (formData, orderData, service, pricing) =>
         status: result.status
       };
     } else if (result.status === 'pending' || result.status === 'in_process') {
-      // Pago pendiente
-      console.log('⏳ Pago pendiente, redirigiendo a pending...');
       window.location.href = `/payment/pending?payment_id=${result.id}`;
       return {
         paymentId: result.id,
@@ -87,8 +77,6 @@ const processPaymentWithOrder = async (formData, orderData, service, pricing) =>
         status: result.status
       };
     } else {
-      // Pago rechazado o fallido
-      console.log('❌ Pago fallido, redirigiendo a failure...');
       window.location.href = `/payment/failure?payment_id=${result.id}`;
       throw new Error(result.status_detail || 'Pago rechazado');
     }

@@ -22,7 +22,6 @@ export async function POST(request) {
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error in process-payment:', error);
     return NextResponse.json(
       { error: 'Error procesando pago' },
       { status: 500 }

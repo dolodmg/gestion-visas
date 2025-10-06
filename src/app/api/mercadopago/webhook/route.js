@@ -6,8 +6,7 @@ export async function POST(request) {
   try {
     const body = await request.text();
     const headers = {};
-    
-    // Pasar headers importantes
+  
     request.headers.forEach((value, key) => {
       if (key.startsWith('x-')) {
         headers[key] = value;
@@ -29,7 +28,6 @@ export async function POST(request) {
 
     return NextResponse.json({ status: 'ok' });
   } catch (error) {
-    console.error('Error in webhook:', error);
     return NextResponse.json(
       { error: 'Error procesando webhook' },
       { status: 500 }

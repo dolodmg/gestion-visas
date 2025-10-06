@@ -28,7 +28,7 @@ const OrderQuantitySelector = ({ quantity, onQuantityChange, allowsVariableQuant
         <button
           onClick={handleDecrease}
           disabled={quantity <= min}
-          className="w-6 h-6 flex items-center justify-center rounded-lg border-2 border-gray-300 bg-white disabled:opacity-40 disabled:cursor-not-allowed active:bg-gray-100 transition-colors"
+          className="hover:cursor-pointer w-6 h-6 flex items-center justify-center rounded-lg border-2 border-gray-300 bg-white disabled:opacity-40 disabled:cursor-not-allowed active:bg-gray-100 transition-colors"
           aria-label="Disminuir cantidad"
         >
           <Minus className="w-3 h-3" />
@@ -41,7 +41,7 @@ const OrderQuantitySelector = ({ quantity, onQuantityChange, allowsVariableQuant
         <button
           onClick={handleIncrease}
           disabled={quantity >= max}
-          className="w-6 h-6 flex items-center justify-center rounded-lg border-2 border-gray-300 bg-white disabled:opacity-40 disabled:cursor-not-allowed active:bg-gray-100 transition-colors"
+          className="hover:cursor-pointer w-6 h-6 flex items-center justify-center rounded-lg border-2 border-gray-300 bg-white disabled:opacity-40 disabled:cursor-not-allowed active:bg-gray-100 transition-colors"
           aria-label="Aumentar cantidad"
         >
           <Plus className="w-3 h-3" />
