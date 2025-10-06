@@ -53,16 +53,15 @@ const CheckoutPageContent = () => {
     }
   }, [service]);
 
-  // 🔥 CRÍTICO: Actualizar cupón en el contexto cuando cambia o se valida
   useEffect(() => {
-  if (couponTouched && isCouponValid) {
-    console.log('✅ Guardando cupón válido en contexto:', coupon.couponCode);
-    setCoupon(coupon); // Usar setCoupon directamente
-  } else if (couponTouched && !isCouponValid) {
-    console.log('❌ Cupón inválido, limpiando contexto');
-    setCoupon(null);
-  }
-}, [coupon, isCouponValid, couponTouched, setCoupon]);
+    if (!couponTouched) return;
+    
+    if (isCouponValid) {
+      setCoupon(coupon);
+    } else {
+      setCoupon(null);
+    }
+  }, [coupon, isCouponValid, couponTouched]);
 
   const handleValidateCoupon = (code) => {
     setCouponTouched(true);
@@ -93,7 +92,6 @@ const CheckoutPageContent = () => {
     router.push(`/payment/failure?payment_id=${paymentId}&idOrder=${idOrder}`);
   };
 
-  // Usar el cupón del contexto para calcular pricing (persistente entre pasos)
   const activeCoupon = contextCoupon || (isCouponValid ? coupon : null);
   const pricing = service ? calculatePricing(quantity, service, activeCoupon, includeVideocall) : null;
 
@@ -120,7 +118,6 @@ const CheckoutPageContent = () => {
               idService: service.idService
             }}
             pricing={pricing}
-            coupon={activeCoupon}
             onPaymentSuccess={handlePaymentSuccess}
             onPaymentPending={handlePaymentPending}
             onPaymentError={handlePaymentError}

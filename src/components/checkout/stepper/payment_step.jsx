@@ -9,7 +9,7 @@ import processPaymentWithOrder from '@/components/checkout/stepper/process_payme
 
 const inter = Inter({ subsets: ['latin'], weight: ['400','500','700'] });
 
-const PaymentStep = ({ service, pricing, coupon, onPaymentSuccess, onPaymentPending, onPaymentError }) => {
+const PaymentStep = ({ service, pricing, onPaymentSuccess, onPaymentPending, onPaymentError }) => {
   const { personalInfo, prevStep, createOrder, updateOrder, order: contextOrder, coupon: contextCoupon } = useCheckout();
   const [orderData, setOrderData] = useState(null);
   const [preferenceId, setPreferenceId] = useState(null);
@@ -42,98 +42,41 @@ const PaymentStep = ({ service, pricing, coupon, onPaymentSuccess, onPaymentPend
     return data.preferenceId;
   };
 
-  // Inicializar orden cuando entramos al paso de pago
   useEffect(() => {
-    const initializeOrder = async () => {
-      if (isInitializingRef.current || !personalInfo?.email) {
-        return;
-      }
-
-      isInitializingRef.current = true;
-      setIsLoading(true);
-      
-      try {
-        let order;
-        
-        if (contextOrder?.orderId) {
-          console.log('✅ Reutilizando orden existente:', contextOrder.orderId);
-          order = await updateOrder(contextOrder.orderId, service, contextCoupon);
-          previousOrderIdRef.current = order.orderId;
-        } else {
-          console.log('🆕 Creando nueva orden');
-          order = await createOrder(service, contextCoupon);
-          previousOrderIdRef.current = order.orderId;
-        }
-        
-        setOrderData(order);
-        setTotalPriceArs(order.totalPriceArs); 
-    
-        const newPreferenceId = await createPreference(order);
-        setPreferenceId(newPreferenceId);
-        
-        console.log('✅ Orden y preference creadas/actualizadas:', { 
-          orderId: order.orderId,
-          externalReference: order.externalReference,
-          preferenceId: newPreferenceId,
-          coupon: contextCoupon?.couponCode || 'ninguno'
-        });
-
-      } catch (error) {
-        console.error('❌ Error inicializando orden:', error);
-        onPaymentError?.(error);
-      } finally {
-        setIsLoading(false);
-        isInitializingRef.current = false;
-      }
-    };
-
-    initializeOrder();
-  }, []); 
-
-  useEffect(() => {
-  const handleCouponChange = async () => {
-    if (!orderData?.orderId || isInitializingRef.current) return;
-    
-    const currentCoupon = contextCoupon?.couponCode || null;
-    
-    if (previousCouponRef.current === undefined) {
-      previousCouponRef.current = currentCoupon;
-      console.log('Inicializando previousCouponRef con:', currentCoupon);
+  const initializeOrder = async () => {
+    if (isInitializingRef.current || !personalInfo?.email) {
       return;
     }
+
+    isInitializingRef.current = true;
+    setIsLoading(true);
     
-    const previousCoupon = previousCouponRef.current;
-    
-    if (currentCoupon !== previousCoupon) {
-      console.log('el cupón cambió, actualizando orden...', { 
-        previous: previousCoupon, 
-        current: currentCoupon 
-      });
+    try {
+      let order;
       
-      setIsLoading(true);
-      
-      try {
-        const updatedOrder = await updateOrder(orderData.orderId, service, contextCoupon);
-        setOrderData(updatedOrder);
-        setTotalPriceArs(updatedOrder.totalPriceArs);
-        previousCouponRef.current = currentCoupon;
-        
-        const newPreferenceId = await createPreference(updatedOrder);
-        setPreferenceId(newPreferenceId);
-        
-        console.log('Orden y preference actualizadas con nuevo cupón');
-        
-      } catch (error) {
-        console.error('Error actualizando orden con cupón:', error);
-        onPaymentError?.(error);
-      } finally {
-        setIsLoading(false);
+      if (contextOrder?.orderId) {
+        order = await updateOrder(contextOrder.orderId, service, contextCoupon);
+      } else {
+        console.log('🆕 Creando nueva orden');
+        order = await createOrder(service, contextCoupon);
       }
+      
+      setOrderData(order);
+      setTotalPriceArs(order.totalPriceArs); 
+  
+      const newPreferenceId = await createPreference(order);
+      setPreferenceId(newPreferenceId);
+
+    } catch (error) {
+      onPaymentError?.(error);
+    } finally {
+      setIsLoading(false);
+      isInitializingRef.current = false;
     }
   };
 
-  handleCouponChange();
-  }, [contextCoupon]);
+  initializeOrder();
+}, [contextCoupon?.couponCode]);
 
   const handleGoBack = () => {
     console.log('⬅️ Usuario vuelve al paso 1 - orden se mantendrá para actualización');
