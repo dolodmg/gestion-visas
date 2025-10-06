@@ -25,10 +25,10 @@ const CheckoutPageContent = () => {
   const [quantity, setQuantity] = useState(1);
   const [couponCode, setCouponCode] = useState('');
   const [couponTouched, setCouponTouched] = useState(false);
-  const [includeVideocall, setIncludeVideocall] = useState(false);
+  const { includeVideocall, setIncludeVideocall } = useCheckout();
   const { coupon, loading: couponLoading, error: couponError } = useCoupon(couponCode);
   
-  const { currentStep, STEPS } = useCheckout();
+  const { currentStep, STEPS, coupon: contextCoupon, setCoupon } = useCheckout();
 
   const isCouponValid = coupon && coupon.active && new Date(coupon.expirationDate) > new Date();
 
@@ -52,6 +52,16 @@ const CheckoutPageContent = () => {
       }
     }
   }, [service]);
+
+  useEffect(() => {
+    if (!couponTouched) return;
+    
+    if (isCouponValid) {
+      setCoupon(coupon);
+    } else {
+      setCoupon(null);
+    }
+  }, [coupon, isCouponValid, couponTouched]);
 
   const handleValidateCoupon = (code) => {
     setCouponTouched(true);
@@ -82,8 +92,10 @@ const CheckoutPageContent = () => {
     router.push(`/payment/failure?payment_id=${paymentId}&idOrder=${idOrder}`);
   };
 
-  // Calcular precios
-  const pricing = service ? calculatePricing(quantity, service, coupon, includeVideocall) : null;
+
+  const activeCoupon = contextCoupon || (isCouponValid ? coupon : null);
+  const pricing = service ? calculatePricing(quantity, service, activeCoupon, includeVideocall) : null;
+
 
   if (loading) return <CheckoutSkeleton />;
   if (error) return <ErrorPage 
@@ -145,7 +157,7 @@ const CheckoutPageContent = () => {
               couponStatus={
                 !couponTouched 
                   ? 'none'
-                  : coupon && isCouponValid
+                  : activeCoupon
                   ? 'valid'
                   : 'invalid'
               }
