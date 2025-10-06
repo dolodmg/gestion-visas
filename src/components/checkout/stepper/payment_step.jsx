@@ -67,7 +67,8 @@ const PaymentStep = ({ service, pricing, onPaymentSuccess, onPaymentPending, onP
           orderId: order.orderId,
           preferenceId: newPreferenceId,
           totalPriceArs: order.totalPriceArs,
-          coupon: order.couponCode || 'ninguno'
+          coupon: order.couponCode || 'ninguno',
+          quantity: service.quantity
         });
 
       } catch (error) {
@@ -80,7 +81,7 @@ const PaymentStep = ({ service, pricing, onPaymentSuccess, onPaymentPending, onP
     };
 
     initializeOrder();
-  }, [contextCoupon?.couponCode, includeVideocall]); 
+  }, [contextCoupon?.couponCode, includeVideocall, service.quantity]); 
 
   const handleGoBack = () => {
     prevStep();
