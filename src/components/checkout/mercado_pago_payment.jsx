@@ -19,7 +19,7 @@ const MercadoPagoPayment = ({
   const [brickInitialized, setBrickInitialized] = useState(false);
 
   const brickInstanceRef = useRef(null);
-  const initializingRef = useRef(false);
+  const initializingRef = useRef(false); // Bandera para evitar doble inicialización
   
   const memoizedPersonalInfo = useMemo(() => ({
     email: personalInfo?.email,
@@ -43,27 +43,6 @@ const MercadoPagoPayment = ({
     script.onerror = () => onPaymentError?.({ message: 'Error cargando SDK de MercadoPago' });
     document.head.appendChild(script);
   }, []);
-
-  // 🆕 Cleanup cuando cambia preferenceId
-  useEffect(() => {
-    if (brickInstanceRef.current && preferenceId) {
-      console.log('🔄 PreferenceId cambió, limpiando brick anterior...');
-      try {
-        brickInstanceRef.current.unmount();
-      } catch (e) {
-        console.log('Error unmounting:', e);
-      }
-      brickInstanceRef.current = null;
-      initializingRef.current = false;
-      setBrickInitialized(false);
-      
-      // Limpiar el container
-      const container = document.getElementById('mp-payment-brick-container');
-      if (container) {
-        container.innerHTML = '';
-      }
-    }
-  }, [preferenceId]);
 
   useEffect(() => {
     console.log('🔍 useEffect ejecutado:', {
@@ -91,11 +70,15 @@ const MercadoPagoPayment = ({
       return;
     }
 
+    // Marcar que estamos inicializando
     initializingRef.current = true;
+
+    // Limpiar completamente el container
     container.innerHTML = '';
     
-    console.log('🔧 Inicializando Payment Brick con preferenceId:', preferenceId);
+    console.log('🔧 Inicializando Payment Brick...');
 
+    // ✅ Configuración explícita de métodos de pago
     mp.bricks().create('payment', 'mp-payment-brick-container', {
       initialization: { 
         amount: amount,
@@ -179,11 +162,13 @@ const MercadoPagoPayment = ({
     });
   };
 
-  const processPaymentDirect = async (formData) => {
+ const processPaymentDirect = async (formData) => {
+  
     if (!formData.payment_method_id || 
         formData.payment_method_id === 'account_money' ||
         !formData.token) {
       await createAndRedirectToPreference(formData);
+      
     } else {
       await processDirectPayment(formData);
     }
@@ -208,6 +193,7 @@ const MercadoPagoPayment = ({
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || 'Error creando preferencia');
 
+    // Redirigir a Mercado Pago
     window.location.href = data.checkoutUrl || data.sandboxUrl;
   };
 
@@ -260,7 +246,7 @@ const MercadoPagoPayment = ({
           console.log('🧹 Limpiando brick al desmontar...');
           brickInstanceRef.current.unmount(); 
           brickInstanceRef.current = null;
-          initializingRef.current = false;
+          initializingRef.current = false; // Resetear bandera
           setBrickInitialized(false);
         } 
         catch (e) { 

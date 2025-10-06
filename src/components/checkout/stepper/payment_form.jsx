@@ -17,7 +17,6 @@ const PaymentForm = ({
       <h3 className="font-medium text-gray-900">Completa tu pago</h3>
       
       <MercadoPagoPayment
-        key={preferenceId}
         amount={totalPriceArs || 0} 
         description={service?.serviceName || 'Servicio'}
         personalInfo={personalInfo}
