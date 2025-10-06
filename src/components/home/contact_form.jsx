@@ -45,7 +45,7 @@ const ContactForm = () => {
   return (
     <div className="bg-[#212020] w-full flex flex-col text-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="flex-1 flex flex-col justify-center">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#BD593A] mb-4">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#BD593A] md:mb-4">
           ¿Listo para empezar, pero tenés dudas?
         </h1>
 

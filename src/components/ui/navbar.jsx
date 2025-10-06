@@ -15,17 +15,15 @@ const Navbar = () => {
   return (
     <nav className="flex w-full items-center justify-between px-6 sm:px-8 py-4 drop-shadow-lg bg-white relative">
       {/* Logo */}
-      <Link href="/">
+      <Link href="/" className="flex items-center gap-2">
         <img
           src="/images/logo.png"
-          width={90}
-          height={90}
           alt="Logo ArgenVisa"
-          className="cursor-pointer"
+          className="cursor-pointer w-14 sm:w-14 md:w-20 h-auto"
         />
-        <div className={`${montserrat.className} flex flex-row font-bold text-lg`}>
-          <span className='text-slate-700'>Argen</span>
-          <span className='text-red-700'>Visa</span>
+        <div className={`${montserrat.className} flex flex-row font-bold text-lg sm:text-xl md:text-2xl`}>
+          <span className="text-slate-700">Argen</span>
+          <span className="text-red-700">Visa</span>
         </div>
       </Link>
 

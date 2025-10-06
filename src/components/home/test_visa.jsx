@@ -24,7 +24,7 @@ const TestVisa = () => {
     if (showResults) setShowResults(false);
   };
 
-  const handleShowResults = () => setShowResults(true);
+  const handleShowResults = () => setShowResults(prev => !prev);
 
   const allAnswered = Object.values(answers).every(answer => answer !== null);
   const allPositive = Object.values(answers).every(answer => answer === true);
@@ -74,9 +74,19 @@ const TestVisa = () => {
                 <p>Recomendaciones antes de aplicar:</p>
                 <ul className="space-y-2 ml-4">
                   {!answers.passport && (
-                    <li className="flex items-center gap-3 text-red-300">
-                      <div className="w-1 h-1 bg-red-400 rounded-full"></div>
-                      <span>Renovar o tramitar pasaporte</span>
+                    <li className="flex items-start gap-3 text-red-300">
+                      <div className="flex-shrink-0 w-2 h-2 mt-2 bg-red-400 rounded-full"></div>
+                      <span>
+                        Renovar o tramitar pasaporte.{" "}
+                        <a
+                          href="https://www.argentina.gob.ar/servicio/tramitar-el-pasaporte"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-semibold text-red-300 underline hover:text-red-300 transition-colors"
+                        >
+                          Pedí tu turno acá
+                        </a>
+                      </span>
                     </li>
                   )}
                   {!answers.origin && (
@@ -109,7 +119,7 @@ const TestVisa = () => {
   };
 
   return (
-    <div className={`${inter.className} min-h-screen w-full bg-[#636A91]`}>
+    <div className={`${inter.className} w-full bg-[#636A91]`}>
       <div className="mx-auto px-4 sm:px-6 py-12 sm:py-16">
         <div className="flex flex-col w-full sm:w-4/5 md:w-2/3 lg:w-1/2 mx-auto">
           {/* Título */}
