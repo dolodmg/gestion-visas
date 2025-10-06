@@ -3,7 +3,6 @@ import { createContext, useContext, useReducer, useCallback, useState } from 're
 
 const CheckoutContext = createContext();
 
-// Estados del stepper
 const STEPS = {
   PERSONAL_INFO: 1,
   PAYMENT: 2,
@@ -21,6 +20,7 @@ const initialState = {
   },
   paymentData: null,
   order: null,
+  coupon: null, 
   loading: false,
   error: null
 };
@@ -48,6 +48,9 @@ function checkoutReducer(state, action) {
     case 'SET_PAYMENT_DATA':
       return { ...state, paymentData: action.payload };
     
+    case 'SET_COUPON': 
+      return { ...state, coupon: action.payload };
+    
     case 'RESET_CHECKOUT':
       return initialState;
     
@@ -60,7 +63,6 @@ export function CheckoutProvider({ children }) {
   const [state, dispatch] = useReducer(checkoutReducer, initialState);
   const [includeVideocall, setIncludeVideocall] = useState(false);
 
-  // Validaciones
   const isPersonalInfoValid = useCallback(() => {
     const { nombre, apellido, email, telefono, documento } = state.personalInfo;
     return nombre.trim() && apellido.trim() && email.trim() && telefono.trim() && documento.trim();
@@ -71,13 +73,12 @@ export function CheckoutProvider({ children }) {
       case STEPS.PERSONAL_INFO:
         return isPersonalInfoValid();
       case STEPS.PAYMENT:
-        return true; // Siempre puede proceder al pago si llegó aquí
+        return true;
       default:
         return false;
     }
   }, [state.currentStep, isPersonalInfoValid]);
 
-  // Acciones
   const nextStep = useCallback(() => {
     if (canGoToNextStep() && state.currentStep < STEPS.CONFIRMATION) {
       dispatch({ type: 'SET_STEP', payload: state.currentStep + 1 });
@@ -94,6 +95,9 @@ export function CheckoutProvider({ children }) {
     dispatch({ type: 'UPDATE_PERSONAL_INFO', payload: updates });
   }, []);
 
+  const setCoupon = useCallback((coupon) => {
+    dispatch({ type: 'SET_COUPON', payload: coupon });
+  }, []);
 
   const createOrder = useCallback(async (serviceData, couponData) => {
     dispatch({ type: 'SET_LOADING', payload: true });
@@ -110,8 +114,6 @@ export function CheckoutProvider({ children }) {
         requestedQuantity: serviceData.quantity,
         includeVideocall: includeVideocall 
       };
-
-      console.log('📦 Enviando orden:', orderPayload);
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_JAVA_BACKEND_URL}/api/orders`, {
         method: 'POST',
@@ -136,31 +138,43 @@ export function CheckoutProvider({ children }) {
     }
   }, [state.personalInfo, includeVideocall]);
 
-const updateOrder = async (orderId, updatedData) => {
-  try {
-    console.log('🔄 Actualizando orden:', orderId);
-    
-    const response = await fetch(`/api/orders/${orderId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updatedData),
-    });
+  const updateOrder = useCallback(async (orderId, serviceData, couponData) => {
+    dispatch({ type: 'SET_LOADING', payload: true });
+    dispatch({ type: 'SET_ERROR', payload: null });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Error actualizando orden');
+    try {
+      const orderPayload = {
+        customerName: state.personalInfo.nombre,
+        customerLastname: state.personalInfo.apellido,
+        customerMail: state.personalInfo.email,
+        customerPhone: state.personalInfo.telefono,
+        couponCode: couponData?.active ? couponData.couponCode : null,
+        requestedQuantity: serviceData.quantity,
+        includeVideocall: includeVideocall
+      };
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_JAVA_BACKEND_URL}/api/orders/${orderId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderPayload)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Error actualizando orden');
+      }
+      
+      const orderData = await response.json();
+      dispatch({ type: 'SET_ORDER', payload: orderData }); 
+      
+      return orderData;
+    } catch (error) {
+      dispatch({ type: 'SET_ERROR', payload: error.message });
+      throw error;
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
     }
-
-    const data = await response.json();
-    console.log('✅ Orden actualizada:', data);
-    return data;
-  } catch (error) {
-    console.error('❌ Error actualizando orden:', error);
-    throw error;
-  }
-};
+  }, [state.personalInfo, includeVideocall]);
 
   const value = {
     ...state,
@@ -170,11 +184,12 @@ const updateOrder = async (orderId, updatedData) => {
     nextStep,
     prevStep,
     updatePersonalInfo,
+    setCoupon, 
     createOrder,
+    updateOrder,
     includeVideocall,
     setIncludeVideocall,
-    dispatch,
-    updateOrder
+    dispatch
   };
 
   return (

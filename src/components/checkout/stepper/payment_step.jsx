@@ -9,21 +9,39 @@ import processPaymentWithOrder from '@/components/checkout/stepper/process_payme
 
 const inter = Inter({ subsets: ['latin'], weight: ['400','500','700'] });
 
-const PaymentStep = ({ service, pricing, coupon, onPaymentSuccess, onPaymentPending, onPaymentError }) => {
-  const { personalInfo, prevStep, createOrder, updateOrder } = useCheckout();
+const PaymentStep = ({ service, pricing, onPaymentSuccess, onPaymentPending, onPaymentError }) => {
+  const { personalInfo, prevStep, createOrder, updateOrder, order: contextOrder, coupon: contextCoupon, includeVideocall } = useCheckout();
   const [orderData, setOrderData] = useState(null);
   const [preferenceId, setPreferenceId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const isInitializingRef = useRef(false); 
   const [totalPriceArs, setTotalPriceArs] = useState(null);
 
+  const createPreference = async (order) => {
+    const preferenceData = {
+      totalPrice: order.totalPrice, 
+      description: service.serviceName,
+      quantity: service.quantity || 1,
+      customerMail: personalInfo.email,
+      customerName: `${personalInfo.nombre} ${personalInfo.apellido}`,
+      externalReference: order.externalReference
+    };
+
+    const response = await fetch('/api/mercadopago/create-preference', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(preferenceData)
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Error creando preferencia');
+    
+    return data.preferenceId;
+  };
+
   useEffect(() => {
     const initializeOrder = async () => {
-      if (orderData || isInitializingRef.current) {
-        return;
-      }
-      
-      if (!personalInfo?.email) {
+      if (isInitializingRef.current || !personalInfo?.email) {
         return;
       }
 
@@ -31,37 +49,29 @@ const PaymentStep = ({ service, pricing, coupon, onPaymentSuccess, onPaymentPend
       setIsLoading(true);
       
       try {
-        const order = await createOrder(service, coupon);
+        let order;
+        
+        if (contextOrder?.orderId) {
+          order = await updateOrder(contextOrder.orderId, service, contextCoupon);
+        } else {
+          order = await createOrder(service, contextCoupon);
+        }
+        
         setOrderData(order);
         setTotalPriceArs(order.totalPriceArs); 
+    
+        const newPreferenceId = await createPreference(order);
+        setPreferenceId(newPreferenceId);
         
-        const preferenceData = {
-          totalPrice: order.totalPrice, 
-          description: service.serviceName,
-          quantity: service.quantity || 1,
-          customerMail: personalInfo.email,
-          customerName: `${personalInfo.nombre} ${personalInfo.apellido}`,
-          externalReference: order.externalReference
-        };
-
-        const response = await fetch('/api/mercadopago/create-preference', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(preferenceData)
-        });
-
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || 'Error creando preferencia');
-
-        setPreferenceId(data.preferenceId);
-        console.log('✅ Orden y preference creadas:', { 
+        console.log('Orden y preference listas:', { 
           orderId: order.orderId,
-          externalReference: order.externalReference,
-          preferenceId: data.preferenceId 
+          preferenceId: newPreferenceId,
+          totalPriceArs: order.totalPriceArs,
+          coupon: order.couponCode || 'ninguno'
         });
 
       } catch (error) {
-        console.error('❌ Error inicializando orden:', error);
+        console.error('Error inicializando orden:', error);
         onPaymentError?.(error);
       } finally {
         setIsLoading(false);
@@ -70,12 +80,9 @@ const PaymentStep = ({ service, pricing, coupon, onPaymentSuccess, onPaymentPend
     };
 
     initializeOrder();
-  }, []); 
+  }, [contextCoupon?.couponCode, includeVideocall]); 
 
-  const handleGoBack = async () => {
-    if (orderData) {
-      console.log('💡 Usuario vuelve atrás - orden quedará como DRAFT para posible actualización');
-    }
+  const handleGoBack = () => {
     prevStep();
   };
 
@@ -85,7 +92,6 @@ const PaymentStep = ({ service, pricing, coupon, onPaymentSuccess, onPaymentPend
       onPaymentSuccess?.(payment);
       return payment;
     } catch (error) {
-      console.error('❌ Error en el proceso de pago:', error);
       onPaymentError?.(error);
       throw error;
     }
@@ -107,17 +113,20 @@ const PaymentStep = ({ service, pricing, coupon, onPaymentSuccess, onPaymentPend
       </div>
 
       <SummaryPersonalInfo personalInfo={personalInfo} onEdit={handleGoBack} />
-      <SummaryOrder service={service} pricing={pricing} coupon={coupon} />
+      <SummaryOrder service={service} pricing={pricing} coupon={contextCoupon} />
 
       {isLoading ? (
         <div className="p-8 bg-blue-50 rounded-lg text-center mt-6">
           <div className="flex items-center justify-center gap-2">
             <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
-            <span className="text-blue-700">Preparando opciones de pago...</span>
+            <span className="text-blue-700">
+              {!preferenceId ? 'Preparando opciones de pago...' : 'Actualizando precio...'}
+            </span>
           </div>
         </div>
       ) : (
         <PaymentForm
+          key={preferenceId}
           service={service}
           pricing={pricing}
           personalInfo={personalInfo}
