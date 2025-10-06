@@ -4,7 +4,7 @@ import { Zap, MessageCircle } from "lucide-react";
 const features = [
   {
     icon: "🇦🇷",
-    title: "Hechos por argentinos",
+    title: "Hecho por argentinos",
     description:
       "Entendemos tu situación específica y los desafíos únicos que enfrentan los ciudadanos argentinos.",
   },
@@ -24,7 +24,7 @@ const features = [
 
 export default function FeaturesGrid() {
   return (
-    <div className="grid gap-30 sm:grid-cols-2 lg:grid-cols-3 mt-10 mx-20">
+    <div className="grid gap-4 lg:gap-30 sm:grid-cols-2 lg:grid-cols-3 mt-4 lg:mt-10 mx-16 md:mx-20">
       {features.map((feature, index) => (
         <Card key={index} className="p-4 text-center bg-[#212020] border-none drop-shadow-lg">
           <CardContent className="flex flex-col items-center gap-2 text-white">
