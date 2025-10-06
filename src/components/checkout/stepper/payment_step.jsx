@@ -16,7 +16,7 @@ const PaymentStep = ({ service, pricing, coupon, onPaymentSuccess, onPaymentPend
   const [isLoading, setIsLoading] = useState(false);
   const isInitializingRef = useRef(false); 
   const [totalPriceArs, setTotalPriceArs] = useState(null);
-  const previousCouponRef = useRef(null);
+  const previousCouponRef = useRef(undefined);
   const previousOrderIdRef = useRef(null);
 
   // Función para crear una nueva preference de MercadoPago
@@ -55,10 +55,8 @@ const PaymentStep = ({ service, pricing, coupon, onPaymentSuccess, onPaymentPend
       try {
         let order;
         
-        // 🔥 CRÍTICO: Verificar si ya existe una orden en el contexto
         if (contextOrder?.orderId) {
           console.log('✅ Reutilizando orden existente:', contextOrder.orderId);
-          // SIEMPRE actualizar la orden con los datos más recientes (incluye cupón)
           order = await updateOrder(contextOrder.orderId, service, contextCoupon);
           previousOrderIdRef.current = order.orderId;
         } else {
@@ -69,9 +67,7 @@ const PaymentStep = ({ service, pricing, coupon, onPaymentSuccess, onPaymentPend
         
         setOrderData(order);
         setTotalPriceArs(order.totalPriceArs); 
-        previousCouponRef.current = contextCoupon?.couponCode || null;
-        
-        // Crear preference de MercadoPago
+    
         const newPreferenceId = await createPreference(order);
         setPreferenceId(newPreferenceId);
         
@@ -92,48 +88,51 @@ const PaymentStep = ({ service, pricing, coupon, onPaymentSuccess, onPaymentPend
     };
 
     initializeOrder();
-  }, []); // Solo ejecutar una vez al montar
+  }, []); 
 
-  // Detectar cambios en el cupón y actualizar la orden
   useEffect(() => {
-    const handleCouponChange = async () => {
-      if (!orderData?.orderId || isInitializingRef.current) return;
+  const handleCouponChange = async () => {
+    if (!orderData?.orderId || isInitializingRef.current) return;
+    
+    const currentCoupon = contextCoupon?.couponCode || null;
+    
+    if (previousCouponRef.current === undefined) {
+      previousCouponRef.current = currentCoupon;
+      console.log('Inicializando previousCouponRef con:', currentCoupon);
+      return;
+    }
+    
+    const previousCoupon = previousCouponRef.current;
+    
+    if (currentCoupon !== previousCoupon) {
+      console.log('el cupón cambió, actualizando orden...', { 
+        previous: previousCoupon, 
+        current: currentCoupon 
+      });
       
-      const currentCoupon = contextCoupon?.couponCode || null;
-      const previousCoupon = previousCouponRef.current;
+      setIsLoading(true);
       
-      // Si el cupón cambió después de la inicialización
-      if (currentCoupon !== previousCoupon) {
-        console.log('🔄 Cupón cambió, actualizando orden...', { 
-          previous: previousCoupon, 
-          current: currentCoupon 
-        });
+      try {
+        const updatedOrder = await updateOrder(orderData.orderId, service, contextCoupon);
+        setOrderData(updatedOrder);
+        setTotalPriceArs(updatedOrder.totalPriceArs);
+        previousCouponRef.current = currentCoupon;
         
-        setIsLoading(true);
+        const newPreferenceId = await createPreference(updatedOrder);
+        setPreferenceId(newPreferenceId);
         
-        try {
-          // Actualizar la orden con el nuevo cupón
-          const updatedOrder = await updateOrder(orderData.orderId, service, contextCoupon);
-          setOrderData(updatedOrder);
-          setTotalPriceArs(updatedOrder.totalPriceArs);
-          previousCouponRef.current = currentCoupon;
-          
-          // Crear nueva preference con el precio actualizado
-          const newPreferenceId = await createPreference(updatedOrder);
-          setPreferenceId(newPreferenceId);
-          
-          console.log('✅ Orden y preference actualizadas con nuevo cupón');
-          
-        } catch (error) {
-          console.error('❌ Error actualizando orden con cupón:', error);
-          onPaymentError?.(error);
-        } finally {
-          setIsLoading(false);
-        }
+        console.log('Orden y preference actualizadas con nuevo cupón');
+        
+      } catch (error) {
+        console.error('Error actualizando orden con cupón:', error);
+        onPaymentError?.(error);
+      } finally {
+        setIsLoading(false);
       }
-    };
+    }
+  };
 
-    handleCouponChange();
+  handleCouponChange();
   }, [contextCoupon]);
 
   const handleGoBack = () => {
