@@ -6,6 +6,31 @@ import VisaPricingSection from '@/components/usa/visa_pricing_section';
 
 const inter = Inter({ subsets: ['latin'], weight: ['100','200','300','400','500','700','900'] });
 
+export const metadata = {
+  title: "Visa de Turismo EEUU (B1/B2)",
+  description: "Gestionamos tu visa de turismo B1/B2 para Estados Unidos. Completamos el formulario DS-160, agendamos tus citas y te asesoramos en todo el proceso desde Argentina.",
+  keywords: ["visa USA", "visa EEUU", "visa", "visa americana", "visa turismo Estados Unidos", "DS-160", "visa B1/B2", "trámite visa USA Argentina", "gestión visa", "trámite visa", "gestor visa"],
+  openGraph: {
+    title: "Visa de Turismo USA (B1/B2) | ArgenVisa",
+    description: "Gestionamos tu visa de turismo B1/B2 para Estados Unidos. Asesoramiento completo desde Argentina.",
+    url: "https://gestion-visas.vercel.app/usa",
+    images: [
+      {
+        url: "/images/us-visa.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Visas a Estados Unidos"
+      }
+    ]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Visa de Turismo USA (B1/B2) | ArgenVisa",
+    description: "Gestionamos tu visa de turismo B1/B2 para Estados Unidos",
+    images: ["/images/us-visa.jpg"]
+  }
+};
+
 const UsaPage = () => {
     const questions = [
         {   
