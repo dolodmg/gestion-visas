@@ -18,7 +18,7 @@ const Navbar = () => {
       <Link href="/" className="flex items-center gap-2">
         <img
           src="/images/logo.png"
-          alt="Logo ArgenVisa"
+          alt="ArgenVisa - Gestión de visas para EEUU y Canadá" 
           className="cursor-pointer w-14 sm:w-14 md:w-20 h-auto"
         />
         <div className={`${montserrat.className} flex flex-row font-bold text-lg sm:text-xl md:text-2xl`}>
