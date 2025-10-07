@@ -3,6 +3,7 @@ import FAQ from '@/components/common/FAQ';
 import { Inter } from 'next/font/google';
 import Image from 'next/image';
 import VisaPricingSection from '@/components/usa/visa_pricing_section';
+import ServiceSchema from '@/components/schemas/service-schema';
 
 const inter = Inter({ subsets: ['latin'], weight: ['100','200','300','400','500','700','900'] });
 
@@ -47,10 +48,15 @@ const UsaPage = () => {
 
     return (
         <div>
+            <ServiceSchema 
+              name="Visa de Turismo USA (B1/B2)"
+              description="Gestión completa del formulario DS-160 y agenda de citas para visa de turismo a Estados Unidos"
+              price="100"
+            />
             <div className='relative w-full h-64 sm:h-80 md:h-[350px] flex items-center'>
                 <Image
                     src="/images/us-visa.jpg"
-                    alt="Visas a Estados Unidos"
+                    alt="ArgenVisa - Gestión de visas para EEUU" 
                     fill
                     className="object-cover"
                     priority

@@ -39,7 +39,7 @@ const ErrorPage = ({
               <div className="relative w-64 h-64 md:w-80 md:h-80 flex items-center justify-center">
                 <img 
                   src="/images/error_tv.png"
-                  alt="Error illustration"
+                  alt="Error 404 - Página no encontrada"
                   className="w-full h-full object-contain drop-shadow-2xl animate-float"
                   style={{
                     filter: 'drop-shadow(0 10px 30px rgba(0, 0, 0, 0.15))'
