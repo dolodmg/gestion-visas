@@ -1,4 +1,4 @@
-import Instructions from '@/components/usa/instructions';
+import Instructions from '@/components/common/instructions';
 import FAQ from '@/components/common/FAQ';
 import { Inter } from 'next/font/google';
 import Image from 'next/image';
@@ -46,6 +46,31 @@ const UsaPage = () => {
         }
     ]
 
+    const h1 = "Un proceso claro y profesional diseñado para hacer tu solicitud de visa lo más simple posible.";
+
+    const steps = [
+        {
+            number: 1,
+            title: "Contratá el servicio online",
+            description: ["Elegí el trámite que necesitás, completá tus datos y aboná de forma segura a través de Mercado Pago. El proceso toma solo unos minutos."]
+        },
+        {
+            number: 2,
+            title: "Recibí la guía para empezar",
+            description: ["Recibirás un mail con un formulario detallado para completar e instrucciones claras sobre los pasos a seguir. Si elegiste el plan Premium, también podrás agendar tu videollamada personalizada."]
+        },
+        {
+            number: 3,
+            title: "Nosotros completamos tu formulario",
+            description: ["Un gestor especializado cargará todos tus datos en el sistema oficial de la embajada y te enviará el cupón de pago para abonar la tasa consular."]
+        },
+        {
+            number: 4,
+            title: "Agendamos tus citas",
+            description: ["Una vez confirmado el pago de la tasa consular, programaremos las citas en el CAS y en la embajada. Te asesoraremos para que llegues completamente preparado a tu entrevista."]
+        }
+    ];
+
     return (
         <div>
             <ServiceSchema 
@@ -67,7 +92,7 @@ const UsaPage = () => {
                     <h1>Estados Unidos</h1>
                 </div>
             </div>
-            <Instructions />
+            <Instructions steps={steps} h1={h1} />
             <VisaPricingSection />
             <FAQ questions={questions} name="la visa americana"/>
         </div>

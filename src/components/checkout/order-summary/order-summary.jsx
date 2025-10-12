@@ -11,7 +11,7 @@ const getServiceType = (serviceName) => {
 };
 
 const OrderSummary = ({ 
-   service, 
+  service, 
   quantity, 
   pricing, 
   includeVideocall,      
@@ -19,7 +19,8 @@ const OrderSummary = ({
   onQuantityChange, 
   couponStatus, 
   onValidateCoupon, 
-  couponLoading 
+  couponLoading,
+  imageConfig
  }) => {
   if (!service || !pricing) {
     return (
@@ -36,7 +37,7 @@ const OrderSummary = ({
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm sticky md:top-8 mb-2">
       {/* Header */}
-      <OrderHeader serviceName={service.serviceName} color={color} />
+      <OrderHeader serviceName={service.serviceName} color={color} imageConfig={imageConfig} />
 
       {/* Selector de cantidad */}
       {service.allowsVariableQuantity && (
