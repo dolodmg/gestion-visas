@@ -1,7 +1,6 @@
-"use client";
-
+'use client';
 import { Check, User, CreditCard } from "lucide-react";
-import { Progress } from "@/components/ui/progress"; // componente de ShadcnUI
+import { Progress } from "@/components/ui/progress"; 
 import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "700"] });
