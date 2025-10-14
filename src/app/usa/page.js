@@ -3,7 +3,6 @@ import FAQ from '@/components/common/FAQ';
 import { Inter } from 'next/font/google';
 import Image from 'next/image';
 import VisaPricingSection from '@/components/usa/visa_pricing_section';
-import ServiceSchema from '@/components/schemas/service-schema';
 
 const inter = Inter({ subsets: ['latin'], weight: ['100','200','300','400','500','700','900'] });
 
