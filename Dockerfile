@@ -1,19 +1,13 @@
 # Etapa 1: Construcción (Build)
 FROM node:18-alpine AS builder
 
-# Establece el directorio de trabajo
+ARG NEXT_PUBLIC_JAVA_BACKEND_URL
+ENV NEXT_PUBLIC_JAVA_BACKEND_URL=${NEXT_PUBLIC_JAVA_BACKEND_URL}
+
 WORKDIR /app
-
-# Copia package.json y package-lock.json
 COPY package*.json ./
-
-# Instala las dependencias
 RUN npm install
-
-# Copia el resto de los archivos de la aplicación
 COPY . .
-
-# Construye la aplicación para producción
 RUN npm run build
 
 # Etapa 2: Producción
