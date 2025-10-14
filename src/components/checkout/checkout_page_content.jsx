@@ -7,7 +7,7 @@ import OrderSummary from '@/components/checkout/order-summary/order-summary';
 import Stepper from '@/components/checkout/stepper/stepper';
 import PersonalInfoStep from '@/components/checkout/stepper/personal_info_step';
 import PaymentStep from '@/components/checkout/stepper/payment_step';
-import { CheckoutProvider, useCheckout } from '@/context/checkout_context';
+import { useCheckout } from '@/context/checkout_context';
 import { calculatePricing } from '@/utils/calculatePricing';
 import { useService } from '@/hooks/useServices';
 import { useCoupon } from '@/hooks/useCoupons';
@@ -20,18 +20,42 @@ const CheckoutPageContent = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const idService = searchParams.get('plan');
-  
+   const country = searchParams.get('country');
+
   const { service, loading, error } = useService(idService);
   const [quantity, setQuantity] = useState(1);
   const [couponCode, setCouponCode] = useState('');
   const [couponTouched, setCouponTouched] = useState(false);
   const { includeVideocall, setIncludeVideocall } = useCheckout();
   const { coupon, loading: couponLoading, error: couponError } = useCoupon(couponCode);
-  
   const { currentStep, STEPS, coupon: contextCoupon, setCoupon } = useCheckout();
-
   const isCouponValid = coupon && coupon.active && new Date(coupon.expirationDate) > new Date();
+  
+  const breadcrumbConfig = {
+    usa: {
+      title: 'Visas Estados Unidos',
+      href: '/usa'
+    },
+    canada: {
+      title: 'Visa & eTA Canadá',
+      href: '/canada'
+    }
+  };
 
+  const { title: titleBreadcrumb, href } = breadcrumbConfig[country] || breadcrumbConfig.usa;
+
+  const imageConfig = {
+    usa: {
+      image: '/images/usa_flag.png',
+      alt: 'Bandera USA',
+      fallback: 'USA'
+    },
+    canada: {
+      image: '/images/canada_flag.png',
+      alt: 'Bandera Canadá',
+      fallback: 'CA'
+    }
+  }
   useEffect(() => {
     if (!idService) {
       return <ErrorPage 
@@ -135,7 +159,7 @@ const CheckoutPageContent = () => {
   return (
     <div className={`${inter.className} bg-gray-50`}>
       <div className="max-w-6xl mx-auto px-4">
-        <Breadcrumb />
+        <Breadcrumb href={href} titleBreadcrumb={titleBreadcrumb} />
         
         <div className="md:mb-6">
           <h1 className="text-md md:text-2xl font-bold text-gray-900 mb-4">
@@ -163,6 +187,7 @@ const CheckoutPageContent = () => {
               }
               onValidateCoupon={handleValidateCoupon}
               couponLoading={couponLoading}
+              imageConfig={imageConfig}
             />
           </div>
 

@@ -14,7 +14,7 @@ const VisaFamily = () => {
   const price = "Desde $75 USD";
   const image = "/images/usa_flag.png";
   const fallback = "USA";
-  const handleClick = () => router.push('/checkout?plan=3');
+  const handleClick = () => router.push('/checkout?plan=3&country=usa');
 
   return (
     <div className={`${inter.className} bg-gradient-to-br from-[#212020] to-[#2a2a2a] rounded-2xl p-6 sm:p-8 w-full max-w-md text-white relative border-2 border-[#22c55e] md:hover:shadow-2xl md:hover:-translate-y-2 transition-all duration-300`}>
@@ -51,7 +51,7 @@ const VisaFamily = () => {
         className='bg-[#22c55e] hover:bg-green-500 text-black font-semibold text-sm sm:text-sm px-4 py-2 sm:px-6 sm:py-3 rounded-xl transition-all duration-300 md:hover:-translate-y-0.5 w-full sm:w-auto'
         size="lg"
         >
-        Contratar pack grupal
+        Contratar Pack Grupal
         </Button>
       </div>
 

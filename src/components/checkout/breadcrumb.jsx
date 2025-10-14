@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google';
 
 const inter = Inter({ subsets: ['latin'], weight: ['100','200','300','400','500','700','900'] });
 
-const Breadcrumb = () => {
+const Breadcrumb = ({href, titleBreadcrumb}) => {
   return (
     <div className={`${inter.className} py-4`}>
       <a 
@@ -11,7 +11,7 @@ const Breadcrumb = () => {
         className="flex items-center gap-2 text-gray-600 hover:text-gray-900 text-sm transition-colors"
       >
         <ChevronLeft className="w-4 h-4" />
-        Visas Estados Unidos
+        {titleBreadcrumb}
       </a>
     </div>
   );
