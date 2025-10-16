@@ -14,7 +14,7 @@ const Eta = () => {
   const price = "$60 USD";
   const image = "/images/canada_flag.png";
   const fallback = "ca";
-  const handleClick = () => router.push('/checkout?plan=4&country=canada');
+  const handleClick = () => router.push('/checkout?plan=6&country=canada');
 
   return (
     <div className={`${inter.className} bg-[#212020] rounded-2xl p-6 sm:p-8 w-full max-w-md text-white relative border-2 border-red-600 md:hover:shadow-xl md:hover:-translate-y-1 transition-all duration-300`}>

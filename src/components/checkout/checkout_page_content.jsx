@@ -56,6 +56,9 @@ const CheckoutPageContent = () => {
       fallback: 'CA'
     }
   }
+
+  const activeImageConfig = imageConfig[country] || imageConfig.usa; 
+
   useEffect(() => {
     if (!idService) {
       return <ErrorPage 
@@ -187,7 +190,7 @@ const CheckoutPageContent = () => {
               }
               onValidateCoupon={handleValidateCoupon}
               couponLoading={couponLoading}
-              imageConfig={imageConfig}
+              imageConfig={activeImageConfig}
             />
           </div>
 
