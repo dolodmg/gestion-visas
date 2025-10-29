@@ -43,11 +43,20 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Footer Bottom */}
-          <div className="border-t border-white/20 pt-2 md:pt-4 text-center">
-            <p className="text-sm sm:text-base text-white/90">
-              &copy; 2025 ArgenVisa. Todos los derechos reservados.
-            </p>
+          <div className="border-t border-white/20 pt-2 md:pt-4">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-4">
+              <p className="text-xs sm:text-sm text-white/90">
+                &copy; 2025 ArgenVisa. Todos los derechos reservados.
+              </p>
+              <a 
+                href="https://linkedin.com/in/doloresdominguez/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs sm:text-sm text-white/80 hover:text-white hover:underline hover:cursor-pointer transition-all duration-300"
+              >
+                Creado por Dolores Dominguez
+              </a>
+            </div>
           </div>
         </div>
       </footer>
