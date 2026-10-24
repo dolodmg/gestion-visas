@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ['latin'], weight: ['100','200','300','400','500'
 const CanadaStandard = () => {
   const router = useRouter();
   const title = "Visa Canadá";
-  const price = "$60 USD";
+  const price = "$80 USD";
   const image = "/images/canada_flag.png";
   const fallback = "ca";
   const handleClick = () => router.push('/checkout?plan=4&country=canada');

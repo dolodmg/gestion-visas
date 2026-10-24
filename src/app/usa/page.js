@@ -43,6 +43,11 @@ const UsaPage = () => {
             id: 5,
             question: "¿La contratación del servicio garantiza que me aprueben la VISA?",
             answer: "No. La aprobación de la visa depende exclusivamente de la Embajada de Estados Unidos. Nuestro servicio te asesora y acompaña en todo el proceso, pero la decisión final corresponde al oficial consular."
+        },
+        {
+            id: 6,
+            question: "¿Pueden modificar o adelantar las fechas de las citas para la visa?",
+            answer: "No. Nosotros no tenemos control sobre la disponibilidad de turnos que ofrece la Embajada de Estados Unidos. Siempre seleccionaremos las fechas más próximas disponibles, pero si no hay turnos cercanos, deberás esperar a que la Embajada habilite nuevas fechas."
         }
     ]
 

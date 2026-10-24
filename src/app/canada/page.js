@@ -89,6 +89,11 @@ const CanadaPage = () => {
             id: 9,
             question: "¿Cuánto tiempo puedo quedarme en Canadá con una eTA?",
             answer: "Con la eTA podés permanecer en Canadá hasta 6 meses por visita. La eTA en sí tiene una validez de 5 años o hasta que venza tu pasaporte (lo que ocurra primero), permitiéndote realizar múltiples viajes durante ese período."
+        },
+        {
+            id: 10,
+            question: "¿Pueden modificar o adelantar las fechas de las citas para la visa?",
+            answer: "No. Nosotros no tenemos control sobre la disponibilidad de turnos. Siempre seleccionaremos las fechas más próximas disponibles, pero si no hay turnos cercanos, deberás esperar a que se habiliten nuevas fechas."
         }
     ]
 

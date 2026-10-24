@@ -7,7 +7,8 @@ import Image from 'next/image';
 export default function Home() {
   return (
     <main className="bg-white min-h-screen flex items-center justify-center flex-col">
-      <Image src="/images/banner.png" alt="ArgenVisa - Gestión de visas para EEUU y Canadá"  width={2816} height={1044} className="w-full h-auto" />
+      <Image src="/images/banner_pase_embarque_mobile.png" alt="ArgenVisa - Tu visa, sin vueltas. Visas para Estados Unidos y Canadá" width={1080} height={1350} className="w-full h-auto md:hidden" />
+      <Image src="/images/banner_pase_embarque.png" alt="ArgenVisa - Tu visa, sin vueltas. Visas para Estados Unidos y Canadá" width={3840} height={1440} className="w-full h-auto hidden md:block" />
       <ServiceList />
       <TestVisa />
       <AboutUs />
